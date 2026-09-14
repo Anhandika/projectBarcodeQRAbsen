@@ -1,0 +1,15 @@
+[phases.setup]
+nixPkgs = ["php82", "php82Packages.composer", "nodejs_20", "npm-10_x"]
+
+[phases.install]
+cmds = ["cd app && composer install --no-dev --optimize-autoloader --no-interaction", "cd app && npm ci"]
+
+[phases.build]
+cmds = ["cd app && npm run build"]
+
+[start]
+cmd = "bash -c 'cd app && php artisan storage:link || true; php artisan migrate --force --no-interaction; php artisan config:cache; php artisan route:cache; php artisan view:cache; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
+
+[variables]
+NIXPACKS_PHP_VERSION = "8.2"
+NIXPACKS_NODE_VERSION = "20"
