@@ -22,7 +22,7 @@
                     <div class="mx-auto flex max-w-[520px] items-end justify-between gap-4">
                         <div>
                             <h2 class="school-display text-xl font-semibold sm:text-2xl">QR absensi aktif</h2>
-                            <p class="mt-1 text-sm text-school-muted">Token berganti otomatis setiap 08 detik</p>
+                            <p class="mt-1 text-sm text-school-muted">Token berganti otomatis setiap 15 detik</p>
                         </div>
                         <span class="flex shrink-0 items-center gap-2 text-xs font-semibold text-school-success"><span class="h-2 w-2 rounded-full bg-school-success"></span>Siap dipindai</span>
                     </div>

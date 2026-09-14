@@ -1,20 +1,20 @@
 @extends('layouts.auth')
 
 @section('content')
-<div class="w-full max-w-[960px] mx-auto grid lg:grid-cols-[1.1fr_.9fr] overflow-hidden rounded-2xl bg-white shadow-[0_16px_40px_rgba(17,26,49,.14)] border border-white/60">
+<div class="w-full max-w-[960px] mx-auto grid lg:grid-cols-[1.1fr_.9fr] overflow-hidden rounded-2xl bg-white shadow-[0_16px_40px_rgba(17,26,49,.14)] border border-white/60 animate-[fadeIn_.6s_ease]">
     {{-- LEFT: 3D hero - desktop only --}}
     <section class="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#0f1e3d] p-8 xl:p-10 2xl:p-12" aria-label="SMK Bina Utama">
         <div class="absolute inset-0">
             <img src="{{ asset('images/bg-sekolah.jpg') }}" alt="" class="h-full w-full object-cover opacity-[0.32]">
             <div class="absolute inset-0 bg-gradient-to-br from-[#0d1a3a]/90 via-[#0f2a5e]/70 to-[#1a3a7a]/60"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-            <div class="absolute -top-10 -left-10 h-52 w-52 rounded-full bg-[#2c68f5]/30 blur-[40px]"></div>
-            <div class="absolute bottom-20 right-10 h-64 w-64 rounded-full bg-[#ffd500]/20 blur-[45px]"></div>
+            <div class="absolute -top-10 -left-10 h-52 w-52 rounded-full bg-[#2c68f5]/30 blur-[40px] animate-[float_6s_ease-in-out_infinite]"></div>
+            <div class="absolute bottom-20 right-10 h-64 w-64 rounded-full bg-[#ffd500]/20 blur-[45px] animate-[float_7s_ease-in-out_infinite_reverse]"></div>
         </div>
         <div class="relative">
             <div class="flex items-center gap-3">
-                <div class="h-12 w-12 xl:h-[52px] xl:w-[52px] shrink-0 rounded-2xl bg-white p-[5px] shadow-[0_8px_24px_rgba(0,0,0,.25)] flex items-center justify-center">
-                    <img src="{{ asset('images/logo-smk.png') }}" alt="Logo SMK Bina Utama Kendal" class="h-full w-full object-contain">
+                <div class="h-12 w-12 xl:h-[52px] xl:w-[52px] shrink-0 rounded-2xl bg-white p-[5px] shadow-[0_12px_28px_rgba(0,0,0,.3)] flex items-center justify-center animate-[tilt3d_5s_ease-in-out_infinite]" style="transform: perspective(600px) rotateY(-8deg) rotateX(6deg);">
+                    <img src="{{ asset('images/logo-smk.png') }}" alt="Logo SMK Bina Utama Kendal" class="h-full w-full object-contain drop-shadow">
                 </div>
                 <div class="text-white min-w-0">
                     <div class="school-display text-xs xl:text-[13px] font-bold tracking-[0.12em]">SMK BINA UTAMA</div>
@@ -24,7 +24,7 @@
             <div class="mt-10 xl:mt-14 max-w-[420px]">
                 <p class="inline-flex items-center rounded-full bg-white/10 backdrop-blur px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-[#a9c1ff] border border-white/15">● PUSAT KEHADIRAN DIGITAL</p>
                 <h1 class="school-display mt-4 xl:mt-5 text-[28px] xl:text-[36px] font-bold leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,.3)]">Absensi<br><span class="bg-gradient-to-r from-[#ffd500] to-[#ffc017] bg-clip-text text-transparent">cerdas, aman,</span><br>siap dipindai.</h1>
-                <p class="mt-4 text-sm xl:text-[15px] leading-6 xl:leading-7 text-white/75 font-medium">QR dinamis berumur 8 detik, validasi GPS radius sekolah & pencatatan real-time.</p>
+                <p class="mt-4 text-sm xl:text-[15px] leading-6 xl:leading-7 text-white/75 font-medium">QR dinamis berumur 15 detik, validasi GPS radius sekolah & pencatatan real-time.</p>
             </div>
         </div>
         <div class="relative grid grid-cols-3 gap-2.5 xl:gap-3">

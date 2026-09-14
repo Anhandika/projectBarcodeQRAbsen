@@ -1,6 +1,7 @@
 export function monitorCountdown({ initial = {}, refreshUrl = '' } = {}) {
     return {
-        seconds: Number(initial.countdown_seconds ?? 8),
+        seconds: Math.floor(Number(initial.countdown_seconds ?? 15)),
+        ttl: 15,
         qr: initial,
         refreshUrl,
         refreshing: false,
@@ -43,10 +44,11 @@ export function monitorCountdown({ initial = {}, refreshUrl = '' } = {}) {
 
                 const payload = await response.json();
                 this.qr = payload.qr;
-                this.seconds = Number(payload.qr.countdown_seconds ?? 8);
+                this.seconds = Math.floor(Number(payload.qr.countdown_seconds ?? this.ttl));
+                this.ttl = Math.floor(Number(payload.qr.countdown_seconds ?? 15)) || 15;
             } catch (error) {
                 this.$dispatch('monitor-error', { message: error.message });
-                this.seconds = 8;
+                this.seconds = this.ttl;
             } finally {
                 this.refreshing = false;
             }
@@ -57,7 +59,7 @@ export function monitorCountdown({ initial = {}, refreshUrl = '' } = {}) {
         },
 
         progress() {
-            return `${Math.max(0, Math.min(100, (this.seconds / 8) * 100))}%`;
+            return `${Math.max(0, Math.min(100, (this.seconds / this.ttl) * 100))}%`;
         },
 
         // poll recent scans + voice
