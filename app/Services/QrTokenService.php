@@ -14,12 +14,7 @@ class QrTokenService
             ->where('school_setting_id', $school->id)
             ->where('active', true)
             ->latest('issued_at')->first();
-        if ($active && $active->isValid()) {
-            // re-expose plain token is not stored; need to re-issue if not available, so check plain_token attr
-            // If no plain_token (after reload), rotate
-            if ($active->getAttribute('plain_token')) return $active;
-            // otherwise rotate to generate new raw token
-        }
+        if ($active && $active->isValid()) return $active;
         return $this->issue($school);
     }
 
@@ -41,7 +36,7 @@ class QrTokenService
             'active' => true,
         ]);
 
-        $token->setAttribute('plain_token', $rawToken);
+        $token->plain_token = $rawToken;
 
         return $token;
     }
@@ -49,7 +44,7 @@ class QrTokenService
     /** @return array<string, mixed> */
     public function payload(AttendanceToken $token): array
     {
-        $rawToken = $token->getAttribute('plain_token');
+        $rawToken = $token->plain_token ?? '';
 
         return [
             'id' => $token->id,

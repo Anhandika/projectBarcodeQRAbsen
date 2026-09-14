@@ -89,9 +89,8 @@ class AttendanceValidationService
         }
 
         $steps['recorded'] = $this->step('Pencatatan', 'Data tersimpan di server', 'passed');
-        $this->firebase->publishSafely($attendance->load('user'));
+        $this->firebase->publishSafely($attendance);
 
-        $attendance->load('user');
         return [
             'ok' => true,
             'result' => AttendanceResult::SUCCESS->value,

@@ -25,7 +25,7 @@ class AttendanceController extends Controller
         return view('attendance.scan', [
             'school' => $school,
             'activeUser' => auth()->user(),
-            'demoQrToken' => $token->getAttribute('plain_token'),
+            'demoQrToken' => $token->plain_token,
         ]);
     }
 

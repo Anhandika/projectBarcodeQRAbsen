@@ -44,7 +44,7 @@ class StudentDashboardController extends Controller
         ];
 
         $recentScans = Attendance::where('user_id', $user->id)
-            ->with('attendanceToken.school')
+            ->with('token.school')
             ->latest('scanned_at')
             ->limit(5)
             ->get();
