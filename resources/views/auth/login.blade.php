@@ -1,45 +1,110 @@
 @extends('layouts.auth')
 
 @section('content')
-    <div class="w-full max-w-[980px] overflow-hidden rounded-[18px] border border-school-line bg-white shadow-school-section lg:grid lg:grid-cols-[1.05fr_.95fr]">
-        <section class="hidden bg-school-navy p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14" aria-label="Informasi aplikasi">
-            <div>
-                <div class="flex items-center gap-3">
-                    <div class="grid h-11 w-11 place-items-center rounded-school-card bg-white text-sm font-bold text-school-navy">BU</div>
-                    <div><div class="school-display text-sm font-semibold">SMK BINA UTAMA</div><div class="text-xs text-white/55">KENDAL · Absen Digital</div></div>
+<div class="w-full max-w-[1100px] grid lg:grid-cols-[1.15fr_.85fr] overflow-hidden rounded-[20px] bg-white shadow-[0_24px_60px_rgba(17,26,49,.18)] border border-white/60">
+    {{-- LEFT: 3D hero --}}
+    <section class="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#0f1e3d] p-10 xl:p-12" aria-label="SMK Bina Utama">
+        <div class="absolute inset-0">
+            <img src="{{ asset('images/bg-sekolah.jpg') }}" alt="" class="h-full w-full object-cover opacity-[0.32] scale-[1.04]">
+            <div class="absolute inset-0 bg-gradient-to-br from-[#0d1a3a]/90 via-[#0f2a5e]/70 to-[#1a3a7a]/60"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+            {{-- 3D glow orbs --}}
+            <div class="absolute -top-10 -left-10 h-52 w-52 rounded-full bg-[#2c68f5]/30 blur-[40px]"></div>
+            <div class="absolute bottom-20 right-10 h-64 w-64 rounded-full bg-[#ffd500]/20 blur-[45px]"></div>
+        </div>
+        <div class="relative">
+            <div class="flex items-center gap-3.5">
+                <div class="h-[52px] w-[52px] rounded-2xl bg-white p-[5px] shadow-[0_8px_24px_rgba(0,0,0,.25)] flex items-center justify-center">
+                    <img src="{{ asset('images/logo-smk.png') }}" alt="Logo SMK Bina Utama Kendal" class="h-full w-full object-contain drop-shadow">
                 </div>
-                <div class="mt-16 max-w-md"><div class="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#aaa1ff]">Pusat kehadiran sekolah</div><h1 class="school-display text-4xl font-semibold leading-tight">Absensi yang jelas, aman, dan siap dipindai.</h1><p class="mt-5 text-base leading-7 text-white/65">QR dinamis, lokasi sekolah, dan status kehadiran diperiksa berurutan sebelum catatan disimpan.</p></div>
+                <div class="text-white">
+                    <div class="school-display text-[13px] font-bold tracking-[0.12em]">SMK BINA UTAMA</div>
+                    <div class="text-[11px] tracking-[0.18em] text-white/70 font-semibold">KENDAL • SEKOLAH MENENGAH KEJURUAN</div>
+                </div>
             </div>
-            <div class="grid grid-cols-3 gap-3 text-xs text-white/65"><div class="rounded-school-control border border-white/10 bg-white/5 p-3"><i class="ti ti-qrcode text-lg text-[#aaa1ff]" aria-hidden="true"></i><div class="mt-2">QR aktif</div></div><div class="rounded-school-control border border-white/10 bg-white/5 p-3"><i class="ti ti-map-pin-check text-lg text-[#71ddc1]" aria-hidden="true"></i><div class="mt-2">GPS sesuai</div></div><div class="rounded-school-control border border-white/10 bg-white/5 p-3"><i class="ti ti-database-check text-lg text-[#9bbaff]" aria-hidden="true"></i><div class="mt-2">Tercatat</div></div></div>
-        </section>
+            <div class="mt-14 max-w-[420px]">
+                <p class="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-[#a9c1ff] border border-white/15">● PUSAT KEHADIRAN DIGITAL</p>
+                <h1 class="school-display mt-5 text-[36px] font-bold leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,.3)]">Absensi<br><span class="bg-gradient-to-r from-[#ffd500] to-[#ffc017] bg-clip-text text-transparent">cerdas, aman,</span><br>siap dipindai.</h1>
+                <p class="mt-5 text-[15px] leading-7 text-white/75 font-medium">QR dinamis berumur 8 detik, validasi GPS radius sekolah & pencatatan real-time — elegan dan terpercaya.</p>
+            </div>
+        </div>
+        <div class="relative grid grid-cols-3 gap-3">
+            <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-4 shadow-[0_8px_24px_rgba(0,0,0,.2)] hover:bg-white/15 transition">
+                <div class="h-9 w-9 grid place-items-center rounded-xl bg-gradient-to-br from-[#ffd500] to-[#ffb700] text-[#111a31] shadow-lg"><i class="ti ti-qrcode text-[18px]"></i></div>
+                <div class="mt-3 text-xs font-bold text-white">QR Aktif</div><div class="text-[11px] text-white/60">Auto-refresh</div>
+            </div>
+            <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-4 shadow-[0_8px_24px_rgba(0,0,0,.2)]">
+                <div class="h-9 w-9 grid place-items-center rounded-xl bg-gradient-to-br from-[#2cf0b8] to-[#14a884] text-white shadow-lg"><i class="ti ti-map-pin-check text-[18px]"></i></div>
+                <div class="mt-3 text-xs font-bold text-white">GPS Valid</div><div class="text-[11px] text-white/60">Radius 80m</div>
+            </div>
+            <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-4 shadow-[0_8px_24px_rgba(0,0,0,.2)]">
+                <div class="h-9 w-9 grid place-items-center rounded-xl bg-gradient-to-br from-[#8ea8ff] to-[#5b7cf5] text-white shadow-lg"><i class="ti ti-shield-check text-[18px]"></i></div>
+                <div class="mt-3 text-xs font-bold text-white">Tercatat</div><div class="text-[11px] text-white/60">Realtime</div>
+            </div>
+        </div>
+    </section>
 
-        <section class="p-6 sm:p-10 xl:p-14">
-            <div class="mb-8 lg:hidden"><div class="mb-4 flex items-center gap-3"><div class="grid h-10 w-10 place-items-center rounded-school-card bg-school-navy text-xs font-bold text-white">BU</div><div><div class="school-display text-sm font-semibold">SMK BINA UTAMA</div><div class="text-xs text-school-muted">KENDAL · Absen Digital</div></div></div></div>
-            <div class="mb-8"><div class="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-school-purple">Selamat datang</div><h2 class="school-display text-2xl font-semibold">Masuk ke ruang absensi</h2><p class="mt-2 text-sm leading-6 text-school-muted">Gunakan akun demo sesuai peran Anda untuk mencoba alur Digital Plinth.</p></div>
+    {{-- RIGHT: form --}}
+    <section class="relative bg-white p-7 sm:p-10 xl:p-11 flex flex-col justify-center">
+        <div class="lg:hidden flex items-center gap-3 mb-6">
+            <img src="{{ asset('images/logo-smk.png') }}" alt="Logo" class="h-11 w-11 rounded-xl bg-white shadow border p-1">
+            <div><div class="school-display text-sm font-bold">SMK BINA UTAMA KENDAL</div><div class="text-xs text-school-muted tracking-wide">Absen Digital • Profesional</div></div>
+        </div>
 
-            @if ($errors->any())
-                <div class="mb-5 rounded-school-control border border-[#f0d2d5] bg-[#fff6f7] px-4 py-3 text-sm text-school-danger" role="alert">{{ $errors->first() }}</div>
-            @endif
+        {{-- 3D floating logo accent --}}
+        <div class="absolute -top-6 -right-6 hidden xl:block opacity-[0.06] pointer-events-none">
+            <img src="{{ asset('images/logo-smk.png') }}" class="h-40 w-40 object-contain" alt="">
+        </div>
 
-            <form action="{{ route('login.store') }}" method="POST" class="space-y-5" x-data="firebaseAuth({ enabled: {{ config('firebase_integration.web.auth_enabled') ? 'true' : 'false' }}, sessionUrl: '{{ route('firebase.session') }}' })" @submit.prevent="submit($event)">
-                @csrf
-                <div x-show="enabled" x-cloak class="rounded-school-control border border-[#e3dcff] bg-[#f7f5ff] px-3 py-2.5 text-xs text-school-purple" role="status">Firebase Authentication aktif untuk login project {{ config('firebase_integration.project_id') }}.</div>
-                <div x-show="error" x-cloak class="rounded-school-control border border-[#f0d2d5] bg-[#fff6f7] px-3 py-2.5 text-xs text-school-danger" role="alert" x-text="error"></div>
-                <div>
-                    <label for="email" class="mb-2 block text-sm font-semibold text-school-ink">Email</label>
-                    <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@sekolah.test" class="h-11 w-full rounded-school-control border border-school-line bg-white px-3 text-sm outline-none transition focus:border-school-blue focus:ring-3 focus:ring-school-blue/10">
-                    @error('email')<p class="mt-1.5 text-xs text-school-danger">{{ $message }}</p>@enderror
+        <div class="mb-7">
+            <p class="text-[10px] font-bold tracking-[0.18em] text-[#623ed8] uppercase">Selamat datang</p>
+            <h2 class="school-display mt-1.5 text-[26px] font-bold leading-tight text-[#0f1e3d]">Masuk ke ruang absensi</h2>
+            <p class="mt-2 text-[13.5px] leading-6 text-[#68748b]">Gunakan akun demo sesuai peran untuk mencoba alur <span class="font-semibold text-[#0f1e3d]">Digital Plinth</span>.</p>
+        </div>
+
+        @if ($errors->any())
+            <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">{{ $errors->first() }}</div>
+        @endif
+
+        <form action="{{ route('login.store') }}" method="POST" class="space-y-5" x-data="firebaseAuth({ enabled: {{ config('firebase_integration.web.auth_enabled') ? 'true' : 'false' }}, sessionUrl: '{{ route('firebase.session') }}' })" @submit.prevent="submit($event)">
+            @csrf
+            <div x-show="enabled" x-cloak class="rounded-xl border border-violet-200 bg-violet-50 px-3.5 py-2.5 text-xs text-violet-700">Firebase Authentication aktif — {{ config('firebase_integration.project_id') }}.</div>
+            <div x-show="error" x-cloak class="rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs text-red-600" x-text="error"></div>
+
+            <div>
+                <label for="email" class="mb-2 block text-[13px] font-bold text-[#172033]">Email</label>
+                <div class="relative">
+                    <i class="ti ti-mail absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a95a8]"></i>
+                    <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@sekolah.test" class="h-11 w-full rounded-xl border border-[#e3e8f0] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10 shadow-[0_1px_2px_rgba(0,0,0,.04)]">
                 </div>
-                <div>
-                    <div class="mb-2 flex items-center justify-between gap-3"><label for="password" class="block text-sm font-semibold text-school-ink">Kata sandi</label><span class="text-xs text-school-soft">demo: password</span></div>
-                    <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="Masukkan kata sandi" class="h-11 w-full rounded-school-control border border-school-line bg-white px-3 text-sm outline-none transition focus:border-school-blue focus:ring-3 focus:ring-school-blue/10">
-                    @error('password')<p class="mt-1.5 text-xs text-school-danger">{{ $message }}</p>@enderror
+                @error('email')<p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <div class="mb-2 flex items-center justify-between"><label for="password" class="text-[13px] font-bold text-[#172033]">Kata sandi</label><span class="rounded-full bg-[#f2f5fa] px-2.5 py-1 text-[11px] font-semibold text-[#8a95a8]">demo: password</span></div>
+                <div class="relative">
+                    <i class="ti ti-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a95a8]"></i>
+                    <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" class="h-11 w-full rounded-xl border border-[#e3e8f0] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10 shadow-[0_1px_2px_rgba(0,0,0,.04)]">
                 </div>
-                <label class="flex items-center gap-2 text-xs text-school-muted"><input type="checkbox" name="remember" value="1" class="h-4 w-4 rounded border-school-line text-school-action focus:ring-school-blue/20">Ingat perangkat ini</label>
-                <button type="submit" class="school-button school-button-primary w-full" :disabled="loading"><i class="ti" :class="loading ? 'ti-loader-2 animate-spin' : 'ti-arrow-right'" aria-hidden="true"></i><span x-text="loading ? 'Memverifikasi Firebase…' : (enabled ? 'Masuk dengan Firebase' : 'Masuk ke aplikasi')">Masuk ke aplikasi</span></button>
-            </form>
+                @error('password')<p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>@enderror
+            </div>
 
-            <div class="mt-8 border-t border-school-line pt-5"><div class="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-school-soft">Akun uji tersedia</div><div class="grid gap-2 text-xs"><div class="flex items-center justify-between rounded-school-control bg-school-canvas px-3 py-2.5"><span class="font-semibold">Admin sekolah</span><code class="text-school-muted">adminsekolah@example.test</code></div><div class="flex items-center justify-between rounded-school-control bg-school-canvas px-3 py-2.5"><span class="font-semibold">Guru</span><code class="text-school-muted">guru@example.test</code></div><div class="flex items-center justify-between rounded-school-control bg-school-canvas px-3 py-2.5"><span class="font-semibold">Siswa</span><code class="text-school-muted">siswa@example.test</code></div></div><p class="mt-3 text-xs text-school-soft">Kata sandi untuk semua akun demo: <strong class="text-school-muted">password</strong></p></div>
-        </section>
-    </div>
+            <label class="flex items-center gap-2 text-xs text-[#68748b] font-medium"><input type="checkbox" name="remember" value="1" class="h-4 w-4 rounded border-[#e3e8f0] text-[#315fea] focus:ring-[#2c68f5]/20">Ingat perangkat ini</label>
+
+            <button type="submit" class="w-full h-11 rounded-xl bg-gradient-to-r from-[#1a3a7a] to-[#2c68f5] text-white font-bold text-sm shadow-[0_8px_20px_rgba(44,104,245,.35)] hover:shadow-[0_10px_28px_rgba(44,104,245,.45)] hover:translate-y-[-1px] active:translate-y-[0px] transition flex items-center justify-center gap-2" :disabled="loading">
+                <i class="ti" :class="loading ? 'ti-loader-2 animate-spin' : 'ti-arrow-right'"></i>
+                <span x-text="loading ? 'Memverifikasi…' : (enabled ? 'Masuk dengan Firebase' : 'Masuk ke aplikasi')">Masuk ke aplikasi</span>
+            </button>
+        </form>
+
+        <div class="mt-7 border-t border-[#eef2f7] pt-5">
+            <p class="text-[10px] font-bold tracking-[0.15em] text-[#8a95a8] uppercase mb-3">Akun uji tersedia</p>
+            <div class="grid gap-2">
+                <div class="flex items-center justify-between rounded-xl bg-[#f8fafc] border border-[#eef2f7] px-3.5 py-2.5"><span class="text-xs font-bold text-[#172033]">Admin sekolah</span><code class="text-xs bg-white border px-2 py-1 rounded-lg text-[#68748b]">adminsekolah@example.test</code></div>
+                <div class="flex items-center justify-between rounded-xl bg-[#f8fafc] border border-[#eef2f7] px-3.5 py-2.5"><span class="text-xs font-bold text-[#172033]">Guru</span><code class="text-xs bg-white border px-2 py-1 rounded-lg text-[#68748b]">guru@example.test</code></div>
+                <div class="flex items-center justify-between rounded-xl bg-[#f8fafc] border border-[#eef2f7] px-3.5 py-2.5"><span class="text-xs font-bold text-[#172033]">Siswa</span><code class="text-xs bg-white border px-2 py-1 rounded-lg text-[#68748b]">siswa@example.test</code></div>
+            </div>
+            <p class="mt-3 text-center text-xs text-[#8a95a8]">Kata sandi: <strong class="text-[#172033]">password</strong> • © {{ date('Y') }} SMK Bina Utama Kendal</p>
+        </div>
+    </section>
+</div>
 @endsection
