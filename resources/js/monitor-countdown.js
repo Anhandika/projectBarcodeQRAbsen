@@ -59,5 +59,17 @@ export function monitorCountdown({ initial = {}, refreshUrl = '' } = {}) {
         progress() {
             return `${Math.max(0, Math.min(100, (this.seconds / 8) * 100))}%`;
         },
+
+        // poll recent scans + voice
+        recentUrl: '',
+        lastScanAt: 0,
+        pollTimer: null,
+        startPoll(url) { this.recentUrl = url; this.pollTimer = setInterval(()=>this.pollScans(), 3000); window.addEventListener('storage', e=>{ if(e.key==='last_scan') this.handleScan(JSON.parse(e.newValue)) }); },
+        async pollScans(){
+            if(!this.recentUrl) return;
+            try{ const r=await fetch(this.recentUrl,{headers:{Accept:'application/json'},credentials:'same-origin'}); if(!r.ok) return; const j=await r.json(); const latest=j.scans?.[0]; if(latest && latest.id!==this.lastScanAt){ this.lastScanAt=latest.id; this.$dispatch('scan-received',{scan:latest}); this.speak(`Selamat Datang ${latest.name}, NISN ${latest.identifier}, pukul ${latest.time}, Berhasil`);} }catch(e){}
+        },
+        handleScan(d){ if(!d) return; this.speak(`Selamat Datang ${d.name}, NISN ${d.identifier}, pukul ${d.time}, Berhasil`); },
+        speak(t){ if(!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang='id-ID'; u.rate=0.95; speechSynthesis.speak(u); },
     };
 }

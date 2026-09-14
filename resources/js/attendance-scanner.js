@@ -22,32 +22,41 @@ export function attendanceScanner({ scanUrl = '', demoToken = '' } = {}) {
         camera: null,
         cameraRunning: false,
 
-        async locate() {
-            if (! navigator.geolocation) {
-                this.locationState = 'error';
-                this.locationMessage = 'Browser ini belum mendukung pembacaan lokasi.';
-                return;
-            }
-
-            this.locationState = 'loading';
-            this.locationMessage = 'Mencari koordinat perangkat…';
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    this.latitude = position.coords.latitude;
-                    this.longitude = position.coords.longitude;
-                    this.accuracy = position.coords.accuracy;
-                    this.locationState = 'ready';
-                    this.locationMessage = 'Lokasi sekolah terdeteksi';
-                },
-                (error) => {
+        locate() {
+            return new Promise((resolve) => {
+                if (! navigator.geolocation) {
                     this.locationState = 'error';
-                    this.locationMessage = error.code === 1
-                        ? 'Izin lokasi ditolak. Aktifkan GPS lalu coba lagi.'
-                        : 'Lokasi belum dapat dibaca. Periksa GPS dan coba lagi.';
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
-            );
+                    this.locationMessage = 'Browser ini belum mendukung pembacaan lokasi.';
+                    resolve(false); return;
+                }
+                this.locationState = 'loading';
+                this.locationMessage = 'Mencari koordinat perangkat…';
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        this.latitude = position.coords.latitude;
+                        this.longitude = position.coords.longitude;
+                        this.accuracy = position.coords.accuracy;
+                        this.locationState = 'ready';
+                        this.locationMessage = 'Lokasi sekolah terdeteksi';
+                        resolve(true);
+                    },
+                    (error) => {
+                        this.locationState = 'error';
+                        this.locationMessage = error.code === 1 ? 'Izin lokasi ditolak. Aktifkan GPS lalu coba lagi.' : 'Lokasi belum dapat dibaca. Periksa GPS dan coba lagi.';
+                        resolve(false);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+                );
+            });
+        },
+
+        speakWelcome(name, identifier, timeStr) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const text = `Selamat Datang ${name}, NISN ${identifier}, pukul ${timeStr}, Berhasil`;
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'id-ID'; u.rate = 0.95; u.volume = 1;
+            window.speechSynthesis.speak(u);
         },
 
         useDemoToken() {
@@ -127,6 +136,14 @@ export function attendanceScanner({ scanUrl = '', demoToken = '' } = {}) {
                 this.steps = payload.steps ?? this.steps;
                 this.responseMessage = payload.message ?? 'Respons server diterima.';
                 this.scannerState = 'result';
+                if (payload.result === 'success' && payload.attendance) {
+                    const a = payload.attendance;
+                    const t = a.scanned_at ? new Date(a.scanned_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+                    this.speakWelcome(a.user_name || 'Siswa', a.identifier || '-', t);
+                    try { localStorage.setItem('last_scan', JSON.stringify({name:a.user_name, identifier:a.identifier, time:t, at: Date.now()})); } catch(e){}
+                    // auto-reset after 2.5s to allow next scan
+                    setTimeout(()=>this.resetForScan(), 2500);
+                }
             } catch (error) {
                 this.scannerState = 'error';
                 this.responseMessage = 'Hasil belum dapat dikirim. Sambungkan kembali lalu coba sekali lagi.';

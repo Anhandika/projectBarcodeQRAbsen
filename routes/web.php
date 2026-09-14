@@ -23,6 +23,7 @@ Route::middleware(['auth', 'role:admin_sekolah'])->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/monitor', [MonitorController::class, 'index'])->name('monitor');
     Route::get('/monitor/refresh', [MonitorController::class, 'refresh'])->name('monitor.refresh');
+    Route::get('/monitor/recent', [MonitorController::class, 'recentScans'])->name('monitor.recent');
 });
 
 Route::middleware(['auth', 'role:guru,siswa'])->group(function () {

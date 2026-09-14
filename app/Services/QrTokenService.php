@@ -8,6 +8,21 @@ use Illuminate\Support\Str;
 
 class QrTokenService
 {
+    public function activeOrIssue(SchoolSetting $school): AttendanceToken
+    {
+        $active = AttendanceToken::query()
+            ->where('school_setting_id', $school->id)
+            ->where('active', true)
+            ->latest('issued_at')->first();
+        if ($active && $active->isValid()) {
+            // re-expose plain token is not stored; need to re-issue if not available, so check plain_token attr
+            // If no plain_token (after reload), rotate
+            if ($active->getAttribute('plain_token')) return $active;
+            // otherwise rotate to generate new raw token
+        }
+        return $this->issue($school);
+    }
+
     public function issue(SchoolSetting $school): AttendanceToken
     {
         $now = now($school->timezone ?: config('attendance.timezone'));

@@ -91,12 +91,17 @@ class AttendanceValidationService
         $steps['recorded'] = $this->step('Pencatatan', 'Data tersimpan di server', 'passed');
         $this->firebase->publishSafely($attendance->load('user'));
 
+        $attendance->load('user');
         return [
             'ok' => true,
             'result' => AttendanceResult::SUCCESS->value,
             'message' => 'Kehadiran berhasil dicatat. Waktu kehadiran Anda telah tersimpan.',
             'steps' => $steps,
-            'attendance' => $attendance->load('user'),
+            'attendance' => array_merge($attendance->toArray(), [
+                'user_name' => $attendance->user->name,
+                'identifier' => $attendance->user->identifier,
+                'scanned_at' => $attendance->scanned_at?->toIso8601String(),
+            ]),
             'distance_meters' => round($distance, 2),
         ];
     }
