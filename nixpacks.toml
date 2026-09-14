@@ -8,7 +8,7 @@ cmds = ["composer install --no-dev --optimize-autoloader --no-interaction", "npm
 cmds = ["npm run build"]
 
 [start]
-cmd = "bash -c 'php artisan storage:link || true; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction || true; php artisan config:cache; php artisan route:cache; php artisan view:cache; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
+cmd = "bash -c 'php artisan storage:link || true; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction || true; php artisan key:generate --force || true; php artisan config:cache; php artisan route:cache; php artisan view:cache; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
 
 [variables]
 NIXPACKS_PHP_VERSION = "8.3"
