@@ -135,7 +135,7 @@ Seeder memakai koordinat **demo** untuk SMK BINA UTAMA KENDAL. Ganti nilai `lati
 Firebase dipakai sebagai layanan tambahan, bukan pengganti PostgreSQL. Storage dapat diaktifkan terpisah dari Authentication dan Firestore:
 
 - Firebase Authentication: login Web dan verifikasi ID token di Laravel.
-- Cloud Firestore: salinan event absensi untuk tampilan real-time admin.
+- Cloud Firestore: salinan event absensi untuk tampilan real-time admin (diproses secara Asynchronous melalui Queue).
 - Firebase Storage: adapter upload avatar pengguna.
 
 Untuk memakai Firebase Storage saja di backend Laravel:

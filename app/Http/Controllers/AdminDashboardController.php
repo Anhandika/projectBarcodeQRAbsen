@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\SchoolSetting;
 use App\Models\User;
 use App\Support\AttendancePresenter;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
@@ -16,28 +17,40 @@ class AdminDashboardController extends Controller
     {
         $school = SchoolSetting::query()->firstOrFail();
         $today = now($school->timezone);
-        $studentQuery = User::query()->where('role', UserRole::SISWA->value)->where('active', true);
-        $presentStudents = Attendance::query()
-            ->whereDate('attendance_date', $today->toDateString())
-            ->where('result', AttendanceResult::SUCCESS->value)
-            ->whereHas('user', fn ($query) => $query->where('role', UserRole::SISWA->value))
-            ->count();
-        $totalStudents = (clone $studentQuery)->count();
+        $dateStr = $today->toDateString();
+
+        // Caching stats for 30 seconds to prevent "dump load" on frequent refreshes
+        $statsData = Cache::remember('admin_dashboard_stats_' . $dateStr, 30, function () use ($dateStr) {
+            $totalStudents = User::query()->where('role', UserRole::SISWA->value)->where('active', true)->count();
+            $totalTeachers = User::query()->where('role', UserRole::GURU->value)->where('active', true)->count();
+            $presentStudents = Attendance::query()
+                ->whereDate('attendance_date', $dateStr)
+                ->where('result', AttendanceResult::SUCCESS->value)
+                ->whereHas('user', fn ($query) => $query->where('role', UserRole::SISWA->value))
+                ->count();
+
+            return compact('totalStudents', 'totalTeachers', 'presentStudents');
+        });
+
+        $totalStudents = $statsData['totalStudents'];
+        $totalTeachers = $statsData['totalTeachers'];
+        $presentStudents = $statsData['presentStudents'];
+        $absentStudents = max(0, $totalStudents - $presentStudents);
 
         return view('admin.dashboard', [
             'school' => $school,
             'activeUser' => auth()->user(),
             'stats' => [
                 ['label' => 'Total siswa', 'value' => $totalStudents, 'caption' => 'data pengguna aktif', 'icon' => 'ti-school', 'tone' => 'purple'],
-                ['label' => 'Total guru', 'value' => User::query()->where('role', UserRole::GURU->value)->where('active', true)->count(), 'caption' => 'data pengguna aktif', 'icon' => 'ti-users', 'tone' => 'blue'],
+                ['label' => 'Total guru', 'value' => $totalTeachers, 'caption' => 'data pengguna aktif', 'icon' => 'ti-users', 'tone' => 'blue'],
                 ['label' => 'Hadir hari ini', 'value' => $presentStudents, 'caption' => AttendancePresenter::percentage($presentStudents, $totalStudents) . ' dari total', 'icon' => 'ti-circle-check', 'tone' => 'success'],
-                ['label' => 'Belum hadir', 'value' => max(0, $totalStudents - $presentStudents), 'caption' => 'menunggu', 'icon' => 'ti-clock', 'tone' => 'warning'],
+                ['label' => 'Belum hadir', 'value' => $absentStudents, 'caption' => 'menunggu', 'icon' => 'ti-clock', 'tone' => 'warning'],
             ],
             'recentScans' => Attendance::query()->with('user')->latest('scanned_at')->limit(5)->get(),
             'todayLabel' => ucfirst($today->locale('id')->translatedFormat('l, d F Y')) . ' · ' . $today->format('H:i') . ' WIB',
             'summary' => [
                 'present' => $presentStudents,
-                'absent' => max(0, $totalStudents - $presentStudents),
+                'absent' => $absentStudents,
                 'percentage' => AttendancePresenter::percentage($presentStudents, $totalStudents),
             ],
         ]);

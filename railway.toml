@@ -3,8 +3,8 @@ builder = "NIXPACKS"
 buildCommand = "composer install --no-dev --optimize-autoloader --no-interaction && npm ci && npm run build"
 
 [deploy]
-startCommand = "bash -c 'php artisan storage:link || true; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction || true; if [ ! -f .env ]; then cp .env.example .env; fi; if [ -z \"$APP_KEY\" ]; then php artisan key:generate --force; fi; mkdir -p storage/framework/sessions; php artisan config:clear; php artisan config:cache; php artisan route:clear; php artisan route:cache; php artisan view:clear; php artisan view:cache; (while true; do php artisan schedule:run --no-interaction 2>/dev/null || true; sleep 60; done) & php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
+startCommand = "bash -c 'php artisan storage:link || true; if [ ! -f .env ]; then cp .env.example .env; fi; if [ -z \"$APP_KEY\" ]; then php artisan key:generate --force; fi; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction || true; mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache; php artisan config:cache; php artisan route:cache; php artisan view:cache; (php artisan queue:work --tries=3 --timeout=90 --daemon &); (while true; do php artisan schedule:run --no-interaction; sleep 60; done &); php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
 healthcheckPath = "/up"
-healthcheckTimeout = 300
+healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
+restartPolicyMaxRetries = 5

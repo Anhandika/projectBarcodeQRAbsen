@@ -89,7 +89,8 @@ class AttendanceValidationService
         }
 
         $steps['recorded'] = $this->step('Pencatatan', 'Data tersimpan di server', 'passed');
-        $this->firebase->publishSafely($attendance);
+
+        \App\Jobs\PublishAttendanceToFirebase::dispatch($attendance);
 
         return [
             'ok' => true,
