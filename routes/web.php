@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('login'))->name('home');
 
+// Railway healthcheck (see railway.toml -> healthcheckPath = /up)
+Route::get('/up', fn () => response()->json(['status' => 'ok']))->name('health');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
