@@ -4,6 +4,7 @@
     <div
         class="mx-auto max-w-[1280px]"
         x-data="monitorCountdown({ initial: {{ Illuminate\Support\Js::from($activeQr) }}, refreshUrl: '{{ route('monitor.refresh') }}' })"
+        x-init="startPoll('{{ route('monitor.recent') }}')"
         @monitor-error.window="window.alert($event.detail.message)"
     >
         <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
