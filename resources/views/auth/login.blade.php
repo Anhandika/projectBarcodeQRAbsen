@@ -54,7 +54,7 @@
                     <img src="{{ asset('images/logo-smk.png') }}" alt="Logo" class="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-white p-1.5 shadow-lg shrink-0 object-contain">
                     <div class="text-white min-w-0">
                         <div class="school-display text-xs sm:text-sm font-bold leading-tight">SMK BINA UTAMA KENDAL</div>
-                        <div class="text-[11px] text-white/75">Absen Digital • Profesional</div>
+                        <div class="text-[11px] text-white/75">Absensi Digital Module V.1.1.0 •</div>
                     </div>
                 </div>
             </div>
@@ -65,9 +65,9 @@
         </div>
 
         <div class="mb-5 sm:mb-7">
-            <p class="text-[10px] font-bold tracking-[0.18em] text-[#623ed8] uppercase">Selamat datang</p>
+            <p class="text-[10px] font-bold tracking-[0.18em] text-[#623ed8] uppercase">Selamat datang Siswa & Guru </p>
             <h2 class="school-display mt-1.5 text-[22px] sm:text-[26px] font-bold leading-tight text-[#0f1e3d]">Masuk ke ruang absensi</h2>
-            <p class="mt-2 text-[13px] sm:text-[13.5px] leading-6 text-[#68748b]">Gunakan akun demo sesuai peran untuk mencoba alur <span class="font-semibold text-[#0f1e3d]">Digital Plinth</span>.</p>
+            <p class="mt-2 text-[13px] sm:text-[13.5px] leading-6 text-[#68748b]">Gunakan akun absensi digital yang sudah terdaftar</p>
         </div>
 
         @if ($errors->any())
