@@ -79,6 +79,32 @@ npm run build
 php artisan optimize
 ```
 
+## Deploy ke Railway
+
+Railway dapat menjalankan Laravel dan PostgreSQL tanpa cPanel. Hubungkan repository GitHub ini ke project Railway, lalu tambahkan PostgreSQL sebagai service. File `railway.toml` akan memasang dependency, membuild Vite, menjalankan migrasi, dan membuka Laravel pada port Railway.
+
+Set Variables berikut di service Laravel Railway:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=<hasilkan dengan php artisan key:generate --show>
+APP_URL=https://<domain-railway-atau-domain-custom>
+DB_CONNECTION=pgsql
+DB_HOST=${{Postgres.PGHOST}}
+DB_PORT=${{Postgres.PGPORT}}
+DB_DATABASE=${{Postgres.PGDATABASE}}
+DB_USERNAME=${{Postgres.PGUSER}}
+DB_PASSWORD=${{Postgres.PGPASSWORD}}
+FIREBASE_ENABLED=false
+FIREBASE_STORAGE_ENABLED=true
+FIREBASE_PROJECT_ID=anproject-8968f
+FIREBASE_STORAGE_DEFAULT_BUCKET=anproject-8968f.firebasestorage.app
+FIREBASE_CREDENTIALS=/app/storage/app/firebase/service-account.json
+```
+
+Service account Firebase harus disediakan sebagai Secret File Railway pada path `/app/storage/app/firebase/service-account.json`. Jangan commit file JSON tersebut ke repository. Setelah deploy, gunakan domain Railway sebagai backend Laravel dan tambahkan domain itu di Firebase Console → Authentication → Settings → Authorized domains.
+
 ## Akun demo
 
 Semua akun menggunakan kata sandi `password`:
