@@ -1,7 +1,7 @@
 @extends('layouts.auth')
 
 @section('content')
-<div class="w-full max-w-[1100px] mx-auto grid lg:grid-cols-[1.15fr_.85fr] overflow-hidden rounded-2xl sm:rounded-[20px] bg-white shadow-[0_16px_40px_rgba(17,26,49,.14)] sm:shadow-[0_24px_60px_rgba(17,26,49,.18)] border border-white/60">
+<div class="w-full max-w-[960px] mx-auto grid lg:grid-cols-[1.1fr_.9fr] overflow-hidden rounded-2xl bg-white shadow-[0_16px_40px_rgba(17,26,49,.14)] border border-white/60">
     {{-- LEFT: 3D hero - desktop only --}}
     <section class="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#0f1e3d] p-8 xl:p-10 2xl:p-12" aria-label="SMK Bina Utama">
         <div class="absolute inset-0">
@@ -104,15 +104,7 @@
             </button>
         </form>
 
-        <div class="mt-6 sm:mt-7 border-t border-[#eef2f7] pt-4 sm:pt-5">
-            <p class="text-[10px] font-bold tracking-[0.15em] text-[#8a95a8] uppercase mb-2.5">Akun uji tersedia</p>
-            <div class="grid gap-2">
-                <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1 xs:gap-2 rounded-xl bg-[#f8fafc] border border-[#eef2f7] px-3 py-2.5"><span class="text-xs font-bold text-[#172033] shrink-0">Admin sekolah</span><code class="text-[11px] sm:text-xs bg-white border px-2 py-1 rounded-lg text-[#68748b] break-all">adminsekolah@example.test</code></div>
-                <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1 xs:gap-2 rounded-xl bg-[#f8fafc] border border-[#eef2f7] px-3 py-2.5"><span class="text-xs font-bold text-[#172033] shrink-0">Guru</span><code class="text-[11px] sm:text-xs bg-white border px-2 py-1 rounded-lg text-[#68748b] break-all">guru@example.test</code></div>
-                <div class="flex flex-col xs:flex-row xs:items-center xs:justify-between gap-1 xs:gap-2 rounded-xl bg-[#f8fafc] border border-[#eef2f7] px-3 py-2.5"><span class="text-xs font-bold text-[#172033] shrink-0">Siswa</span><code class="text-[11px] sm:text-xs bg-white border px-2 py-1 rounded-lg text-[#68748b] break-all">siswa@example.test</code></div>
-            </div>
-            <p class="mt-3 text-center text-[11px] sm:text-xs text-[#8a95a8] leading-relaxed">Kata sandi: <strong class="text-[#172033]">password</strong> • © {{ date('Y') }} SMK Bina Utama Kendal</p>
-        </div>
+        <p class="mt-6 text-center text-[11px] text-[#8a95a8]">© {{ date('Y') }} SMK Bina Utama Kendal</p>
     </section>
 </div>
 @endsection
