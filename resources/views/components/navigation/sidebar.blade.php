@@ -1,7 +1,12 @@
 @php
-    $navItems = [
+    $isAdmin = auth()->user()->role === \App\Enums\UserRole::ADMIN_SEKOLAH;
+    $navItems = $isAdmin ? [
         ['route' => 'dashboard', 'label' => 'Absensi hari ini', 'icon' => 'ti-layout-dashboard'],
         ['route' => 'monitor', 'label' => 'Layar QR', 'icon' => 'ti-qrcode'],
+    ] : [
+        ['route' => 'student.dashboard', 'label' => 'Absensi', 'icon' => 'ti-calendar-event'],
+        ['route' => 'attendance.scan', 'label' => 'Layar Absen', 'icon' => 'ti-qrcode'],
+        ['route' => 'student.profile', 'label' => 'Profil & Pengaturan', 'icon' => 'ti-settings'],
     ];
 @endphp
 
@@ -16,7 +21,7 @@
         </div>
     </div>
 
-    <div class="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">Administrasi</div>
+    <div class="mb-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/50">{{ $isAdmin ? 'Administrasi' : 'Menu Utama' }}</div>
     <nav class="space-y-1">
         @foreach ($navItems as $item)
             @php $isActive = $active === $item['route']; @endphp
@@ -30,13 +35,14 @@
             </a>
         @endforeach
 
+        @if($isAdmin)
         @php $crudNav=[['route'=>'admin.users.index','param'=>['role'=>'guru'],'label'=>'Data guru','icon'=>'ti-users'],['route'=>'admin.users.index','param'=>['role'=>'siswa'],'label'=>'Data siswa','icon'=>'ti-school'],['route'=>'admin.reports.index','param'=>[],'label'=>'Laporan','icon'=>'ti-file-spreadsheet'],['route'=>'admin.location.edit','param'=>[],'label'=>'Lokasi sekolah','icon'=>'ti-map-pin']]; @endphp
-    @foreach ($crudNav as $item)
-            @php $isActive = request()->routeIs($item['route'].'*') && ($item['param']['role'] ?? null) === request()->route('role') || request()->routeIs($item['route']); @endphp
+        @foreach ($crudNav as $item)
             <a href="{{ route($item['route'],$item['param']) }}" class="flex h-[42px] w-full items-center gap-3 rounded-school-control px-3 text-left text-[13px] font-semibold {{ request()->routeIs($item['route'].'*') ? 'text-white bg-white/10' : 'text-white/65 hover:bg-white/10 hover:text-white' }}">
                 <i class="ti {{ $item['icon'] }} text-[18px]"></i>{{ $item['label'] }}
             </a>
-    @endforeach
+        @endforeach
+        @endif
     </nav>
 
     <div class="mt-auto border-t border-white/10 pt-4">

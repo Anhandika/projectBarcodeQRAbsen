@@ -8,6 +8,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\FirebaseSessionController;
 use App\Http\Controllers\MonitorController;
+use App\Http\Controllers\StudentDashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('login'))->name('home');
@@ -42,6 +43,9 @@ Route::middleware(['auth', 'role:admin_sekolah'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:guru,siswa'])->group(function () {
-    Route::get('/scan', [AttendanceController::class, 'scanPage'])->name('attendance.scan');
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
+    Route::get('/scan', [StudentDashboardController::class, 'scan'])->name('attendance.scan');
     Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan.store');
+    Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('student.profile');
+    Route::put('/profile', [StudentDashboardController::class, 'updateProfile'])->name('student.profile.update');
 });
