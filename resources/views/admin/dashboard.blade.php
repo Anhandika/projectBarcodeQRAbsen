@@ -36,11 +36,11 @@
                 </div>
             </div>
 
-            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-12">
-                <div class="xl:col-span-4"><x-dashboard.stat-card :stat="$stats[0]" /></div>
-                <div class="xl:col-span-4"><x-dashboard.stat-card :stat="$stats[1]" /></div>
-                <div class="xl:col-span-2"><x-dashboard.stat-card :stat="$stats[2]" /></div>
-                <div class="xl:col-span-2"><x-dashboard.stat-card :stat="$stats[3]" /></div>
+            <div class="grid gap-3 grid-cols-2 xl:grid-cols-12">
+                <div class="col-span-1 xl:col-span-4"><x-dashboard.stat-card :stat="$stats[0]" /></div>
+                <div class="col-span-1 xl:col-span-4"><x-dashboard.stat-card :stat="$stats[1]" /></div>
+                <div class="col-span-1 xl:col-span-2"><x-dashboard.stat-card :stat="$stats[2]" /></div>
+                <div class="col-span-1 xl:col-span-2"><x-dashboard.stat-card :stat="$stats[3]" /></div>
             </div>
 
             <div class="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_245px]">

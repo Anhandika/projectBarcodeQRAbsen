@@ -30,12 +30,13 @@
             </a>
         @endforeach
 
-        @foreach ([['label' => 'Data guru', 'icon' => 'ti-users'], ['label' => 'Data siswa', 'icon' => 'ti-school'], ['label' => 'Kelas', 'icon' => 'ti-books'], ['label' => 'Laporan', 'icon' => 'ti-file-spreadsheet'], ['label' => 'Lokasi sekolah', 'icon' => 'ti-map-pin']] as $item)
-            <button type="button" class="flex h-[42px] w-full items-center gap-3 rounded-school-control px-3 text-left text-[13px] font-semibold text-white/65 transition-colors hover:bg-white/10 hover:text-white">
-                <i class="ti {{ $item['icon'] }} text-[18px]" aria-hidden="true"></i>
-                {{ $item['label'] }}
-            </button>
-        @endforeach
+        @php $crudNav=[['route'=>'admin.users.index','param'=>['role'=>'guru'],'label'=>'Data guru','icon'=>'ti-users'],['route'=>'admin.users.index','param'=>['role'=>'siswa'],'label'=>'Data siswa','icon'=>'ti-school'],['route'=>'admin.reports.index','param'=>[],'label'=>'Laporan','icon'=>'ti-file-spreadsheet'],['route'=>'admin.location.edit','param'=>[],'label'=>'Lokasi sekolah','icon'=>'ti-map-pin']]; @endphp
+    @foreach ($crudNav as $item)
+            @php $isActive = request()->routeIs($item['route'].'*') && ($item['param']['role'] ?? null) === request()->route('role') || request()->routeIs($item['route']); @endphp
+            <a href="{{ route($item['route'],$item['param']) }}" class="flex h-[42px] w-full items-center gap-3 rounded-school-control px-3 text-left text-[13px] font-semibold {{ request()->routeIs($item['route'].'*') ? 'text-white bg-white/10' : 'text-white/65 hover:bg-white/10 hover:text-white' }}">
+                <i class="ti {{ $item['icon'] }} text-[18px]"></i>{{ $item['label'] }}
+            </a>
+    @endforeach
     </nav>
 
     <div class="mt-auto border-t border-white/10 pt-4">
