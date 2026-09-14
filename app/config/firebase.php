@@ -50,7 +50,22 @@ return [
              *
              */
 
-            'credentials' => env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS')),
+            'credentials' => (function () {
+                $cred = env('FIREBASE_CREDENTIALS', env('GOOGLE_APPLICATION_CREDENTIALS'));
+                // Allow raw JSON string in env (Railway) - write to temp file if needed
+                if ($cred && str_starts_with(trim($cred), '{')) {
+                    $tmp = sys_get_temp_dir() . '/firebase-credentials.json';
+                    if (! file_exists($tmp) || md5_file($tmp) !== md5($cred)) {
+                        file_put_contents($tmp, $cred);
+                    }
+                    return $tmp;
+                }
+                // If path does not exist, return null to avoid boot crash (handled by app logic)
+                if ($cred && ! file_exists($cred) && ! filter_var($cred, FILTER_VALIDATE_URL)) {
+                    return null;
+                }
+                return $cred;
+            })(),
 
             /*
              * ------------------------------------------------------------------------
