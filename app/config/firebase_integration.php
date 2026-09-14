@@ -2,6 +2,7 @@
 
 return [
     'enabled' => (bool) env('FIREBASE_ENABLED', false),
+    'storage_enabled' => (bool) env('FIREBASE_STORAGE_ENABLED', false),
     'project_id' => env('FIREBASE_PROJECT_ID', 'anproject-8968f'),
     'credentials' => env('FIREBASE_CREDENTIALS', 'storage/app/firebase/service-account.json'),
     'firestore_collection' => env('FIREBASE_ATTENDANCE_COLLECTION', 'attendance_events'),

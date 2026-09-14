@@ -11,7 +11,7 @@ class FirebaseStorageService
 {
     public function uploadAvatar(User $user, UploadedFile $file): ?string
     {
-        if (! config('firebase_integration.enabled')) {
+        if (! config('firebase_integration.storage_enabled')) {
             return null;
         }
 
