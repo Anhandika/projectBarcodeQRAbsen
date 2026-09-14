@@ -88,7 +88,7 @@
                 @error('email')<p class="mt-1.5 text-xs text-red-600">{{ $message }}</p>@enderror
             </div>
             <div>
-                <div class="mb-1.5 flex items-center justify-between gap-2"><label for="password" class="text-[13px] font-bold text-[#172033]">Kata sandi</label><span class="shrink-0 rounded-full bg-[#f2f5fa] px-2.5 py-1 text-[11px] font-semibold text-[#8a95a8]">demo: password</span></div>
+                <div class="mb-1.5 flex items-center justify-between gap-2"><label for="password" class="text-[13px] font-bold text-[#172033]">Kata sandi</label></div>
                 <div class="relative">
                     <i class="ti ti-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8a95a8] text-sm"></i>
                     <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" class="h-11 w-full rounded-xl border border-[#e3e8f0] bg-white pl-10 pr-3 text-sm outline-none focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10">
