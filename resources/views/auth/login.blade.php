@@ -24,23 +24,10 @@
             <div class="mt-10 xl:mt-14 max-w-[420px]">
                 <p class="inline-flex items-center rounded-full bg-white/10 backdrop-blur px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-[#a9c1ff] border border-white/15">● PUSAT KEHADIRAN DIGITAL</p>
                 <h1 class="school-display mt-4 xl:mt-5 text-[28px] xl:text-[36px] font-bold leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,.3)]">Absensi<br><span class="bg-gradient-to-r from-[#ffd500] to-[#ffc017] bg-clip-text text-transparent">cerdas, aman,</span><br>siap dipindai.</h1>
-                <p class="mt-4 text-sm xl:text-[15px] leading-6 xl:leading-7 text-white/75 font-medium">QR dinamis berumur 15 detik, validasi GPS radius sekolah & pencatatan real-time.</p>
+
             </div>
         </div>
-        <div class="relative grid grid-cols-3 gap-2.5 xl:gap-3">
-            <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 xl:p-4">
-                <div class="h-8 w-8 xl:h-9 xl:w-9 grid place-items-center rounded-xl bg-gradient-to-br from-[#ffd500] to-[#ffb700] text-[#111a31] shadow-lg"><i class="ti ti-qrcode text-[16px] xl:text-[18px]"></i></div>
-                <div class="mt-2.5 text-xs font-bold text-white">QR Aktif</div><div class="text-[11px] text-white/60">Auto-refresh</div>
-            </div>
-            <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 xl:p-4">
-                <div class="h-8 w-8 xl:h-9 xl:w-9 grid place-items-center rounded-xl bg-gradient-to-br from-[#2cf0b8] to-[#14a884] text-white shadow-lg"><i class="ti ti-map-pin-check text-[16px] xl:text-[18px]"></i></div>
-                <div class="mt-2.5 text-xs font-bold text-white">GPS Valid</div><div class="text-[11px] text-white/60">Radius 80m</div>
-            </div>
-            <div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 xl:p-4">
-                <div class="h-8 w-8 xl:h-9 xl:w-9 grid place-items-center rounded-xl bg-gradient-to-br from-[#8ea8ff] to-[#5b7cf5] text-white shadow-lg"><i class="ti ti-shield-check text-[16px] xl:text-[18px]"></i></div>
-                <div class="mt-2.5 text-xs font-bold text-white">Tercatat</div><div class="text-[11px] text-white/60">Realtime</div>
-            </div>
-        </div>
+
     </section>
 
     {{-- RIGHT: form --}}
