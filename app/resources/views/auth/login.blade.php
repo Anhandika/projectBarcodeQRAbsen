@@ -21,8 +21,10 @@
                 <div class="mb-5 rounded-school-control border border-[#f0d2d5] bg-[#fff6f7] px-4 py-3 text-sm text-school-danger" role="alert">{{ $errors->first() }}</div>
             @endif
 
-            <form action="{{ route('login.store') }}" method="POST" class="space-y-5">
+            <form action="{{ route('login.store') }}" method="POST" class="space-y-5" x-data="firebaseAuth({ enabled: {{ config('firebase_integration.web.auth_enabled') ? 'true' : 'false' }}, sessionUrl: '{{ route('firebase.session') }}' })" @submit.prevent="submit($event)">
                 @csrf
+                <div x-show="enabled" x-cloak class="rounded-school-control border border-[#e3dcff] bg-[#f7f5ff] px-3 py-2.5 text-xs text-school-purple" role="status">Firebase Authentication aktif untuk login project {{ config('firebase_integration.project_id') }}.</div>
+                <div x-show="error" x-cloak class="rounded-school-control border border-[#f0d2d5] bg-[#fff6f7] px-3 py-2.5 text-xs text-school-danger" role="alert" x-text="error"></div>
                 <div>
                     <label for="email" class="mb-2 block text-sm font-semibold text-school-ink">Email</label>
                     <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="nama@sekolah.test" class="h-11 w-full rounded-school-control border border-school-line bg-white px-3 text-sm outline-none transition focus:border-school-blue focus:ring-3 focus:ring-school-blue/10">
@@ -34,7 +36,7 @@
                     @error('password')<p class="mt-1.5 text-xs text-school-danger">{{ $message }}</p>@enderror
                 </div>
                 <label class="flex items-center gap-2 text-xs text-school-muted"><input type="checkbox" name="remember" value="1" class="h-4 w-4 rounded border-school-line text-school-action focus:ring-school-blue/20">Ingat perangkat ini</label>
-                <button type="submit" class="school-button school-button-primary w-full">Masuk ke aplikasi <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+                <button type="submit" class="school-button school-button-primary w-full" :disabled="loading"><i class="ti" :class="loading ? 'ti-loader-2 animate-spin' : 'ti-arrow-right'" aria-hidden="true"></i><span x-text="loading ? 'Memverifikasi Firebase…' : (enabled ? 'Masuk dengan Firebase' : 'Masuk ke aplikasi')">Masuk ke aplikasi</span></button>
             </form>
 
             <div class="mt-8 border-t border-school-line pt-5"><div class="mb-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-school-soft">Akun uji tersedia</div><div class="grid gap-2 text-xs"><div class="flex items-center justify-between rounded-school-control bg-school-canvas px-3 py-2.5"><span class="font-semibold">Admin sekolah</span><code class="text-school-muted">adminsekolah@example.test</code></div><div class="flex items-center justify-between rounded-school-control bg-school-canvas px-3 py-2.5"><span class="font-semibold">Guru</span><code class="text-school-muted">guru@example.test</code></div><div class="flex items-center justify-between rounded-school-control bg-school-canvas px-3 py-2.5"><span class="font-semibold">Siswa</span><code class="text-school-muted">siswa@example.test</code></div></div><p class="mt-3 text-xs text-school-soft">Kata sandi untuk semua akun demo: <strong class="text-school-muted">password</strong></p></div>

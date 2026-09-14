@@ -104,6 +104,38 @@ ATTENDANCE_TIMEZONE=Asia/Jakarta
 
 Seeder memakai koordinat **demo** untuk SMK BINA UTAMA KENDAL. Ganti nilai `latitude`, `longitude`, dan `radius_meters` pada `DatabaseSeeder` sebelum dipakai di lingkungan sekolah sebenarnya.
 
+## Integrasi Firebase opsional
+
+Firebase dipakai sebagai layanan tambahan, bukan pengganti PostgreSQL:
+
+- Firebase Authentication: login Web dan verifikasi ID token di Laravel.
+- Cloud Firestore: salinan event absensi untuk tampilan real-time admin.
+- Firebase Storage: adapter upload avatar pengguna.
+
+SDK yang digunakan:
+
+- `firebase` untuk browser.
+- `kreait/laravel-firebase` untuk Laravel Admin SDK.
+
+Konfigurasi publik Web Firebase berada di `.env` melalui variabel `VITE_FIREBASE_*`. Nilai Web Config boleh masuk ke frontend. Aktifkan setelah project dan Web App Firebase siap:
+
+```dotenv
+FIREBASE_ENABLED=true
+VITE_FIREBASE_AUTH_ENABLED=true
+FIREBASE_PROJECT_ID=anproject-8968f
+FIREBASE_CREDENTIALS=storage/app/firebase/service-account.json
+FIREBASE_ATTENDANCE_COLLECTION=attendance_events
+FIREBASE_STORAGE_DEFAULT_BUCKET=anproject-8968f.firebasestorage.app
+```
+
+Unduh Service Account dari Firebase Console → Project settings → Service accounts, lalu simpan lokal sebagai:
+
+```text
+storage/app/firebase/service-account.json
+```
+
+File JSON tersebut di-ignore dan tidak boleh di-commit ke GitHub. User PostgreSQL dicocokkan menggunakan email Firebase; UID Firebase akan disimpan pada kolom `users.firebase_uid` setelah migration dijalankan.
+
 ## Verifikasi
 
 ```bash
@@ -113,4 +145,4 @@ php artisan test
 npm run build
 ```
 
-Migrasi dan test fitur membutuhkan PostgreSQL yang aktif serta database sesuai `.env`.
+Migrasi dan test fitur membutuhkan PostgreSQL yang aktif serta database sesuai `.env`. Firebase Auth server-side dan sinkronisasi Firestore membutuhkan Service Account yang valid dan rules Firestore yang sesuai.

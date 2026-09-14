@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\FirebaseSessionController;
 use App\Http\Controllers\MonitorController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,7 @@ Route::get('/', fn () => redirect()->route('login'))->name('home');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::post('/firebase/session', [FirebaseSessionController::class, 'store'])->name('firebase.session');
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])

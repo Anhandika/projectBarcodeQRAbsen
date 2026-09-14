@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceValidationService
 {
+    public function __construct(private readonly FirebaseAttendancePublisher $firebase)
+    {
+    }
+
     /** @return array<string, mixed> */
     public function scan(User $user, string $rawToken, float $latitude, float $longitude, ?float $accuracy): array
     {
@@ -85,6 +89,7 @@ class AttendanceValidationService
         }
 
         $steps['recorded'] = $this->step('Pencatatan', 'Data tersimpan di server', 'passed');
+        $this->firebase->publishSafely($attendance->load('user'));
 
         return [
             'ok' => true,
