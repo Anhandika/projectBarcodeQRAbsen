@@ -123,4 +123,20 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    |
+    | This value is documented here for reference only. The actual trusted
+    | proxies used by the HTTP middleware are read directly from the
+    | TRUSTED_PROXIES environment variable in bootstrap/app.php via env(),
+    | since the config service is not yet available at that point in the
+    | application bootstrap process. Set TRUSTED_PROXIES='*' when running
+    | behind Railway's proxy.
+    |
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES', '*'),
+
 ];
