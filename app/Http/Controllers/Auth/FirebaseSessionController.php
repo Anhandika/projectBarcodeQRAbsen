@@ -48,7 +48,7 @@ class FirebaseSessionController extends Controller
 
             return response()->json([
                 'ok' => true,
-                'redirect' => $user->isAdmin() ? route('dashboard') : route('attendance.scan'),
+                'redirect' => $user->isAdmin() ? route('dashboard') : route('student.dashboard'),
             ]);
         } catch (Throwable $exception) {
             report($exception);
