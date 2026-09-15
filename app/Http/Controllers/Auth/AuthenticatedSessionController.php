@@ -36,11 +36,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Clear stale intended URLs to prevent 403 "session hanging" bugs
+        $request->session()->forget('url.intended');
+
         if (Auth::user()->isAdmin()) {
-            return redirect()->intended(route('dashboard'));
+            return redirect()->route('dashboard');
         }
 
-        return redirect()->intended(route('student.dashboard'));
+        return redirect()->route('student.dashboard');
     }
 
     public function destroy(Request $request): RedirectResponse

@@ -92,8 +92,17 @@ class StudentDashboardController extends Controller
             'class_name' => 'nullable|string|max:50',
             'password' => 'nullable|min:6|confirmed',
         ]);
-        if (empty($data['password'])) unset($data['password']);
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
         $user->update($data);
-        return back()->with('ok', 'Profil diperbarui');
+
+        // If password was updated, refresh the session hash to prevent logout
+        if (isset($data['password'])) {
+            auth()->login($user);
+        }
+
+        return back()->with('ok', 'Profil dan sesi Anda berhasil diperbarui');
     }
 }
