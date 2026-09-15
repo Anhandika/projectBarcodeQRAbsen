@@ -36,9 +36,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return Auth::user()->isAdmin()
-            ? redirect()->intended(route('dashboard'))
-            : redirect()->intended(route('attendance.scan'));
+        // Redirect berdasarkan role
+        if (Auth::user()->isAdmin()) {
+            return redirect()->intended(route('dashboard'));
+        } elseif (Auth::user()->hasRole(['guru', 'siswa'])) {
+            return redirect()->intended(route('attendance.scan'));
+        } else {
+            // Fallback ke login jika role tidak valid
+            Auth::logout();
+            return redirect()->route('login')->withErrors(['email' => 'Role tidak valid. Hubungi administrator.']);
+        }
     }
 
     public function destroy(Request $request): RedirectResponse
