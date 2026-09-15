@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Enums\UserRole;
 use App\Http\Requests\FirebaseSessionRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -46,9 +47,17 @@ class FirebaseSessionController extends Controller
             Auth::login($user, false);
             $request->session()->regenerate();
 
+            // ✅ FIX: Properly redirect based on role (consistent with AuthenticatedSessionController)
+            $redirectRoute = match ($user->role?->value) {
+                UserRole::ADMIN_SEKOLAH->value => route('dashboard'),
+                UserRole::GURU->value => route('attendance.scan'),
+                UserRole::SISWA->value => route('attendance.scan'),
+                default => route('login'),  // Fallback to login if role is unknown
+            };
+
             return response()->json([
                 'ok' => true,
-                'redirect' => $user->isAdmin() ? route('dashboard') : route('student.dashboard'),
+                'redirect' => $redirectRoute,
             ]);
         } catch (Throwable $exception) {
             report($exception);
