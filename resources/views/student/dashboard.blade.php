@@ -166,7 +166,7 @@
                 </div>
 
                 {{-- Teacher Discipline Leaderboard - visible only to Guru --}}
-                @if(auth()->user()->role === \App\Enums\UserRole::GURU && $teacherRankings->isNotEmpty())
+                @if((auth()->user()->role === \App\Enums\UserRole::GURU || auth()->user()->role?->value === 'guru') && isset($teacherRankings) && $teacherRankings->isNotEmpty())
                 <div class="bg-white/10 backdrop-blur-xl border border-white/15 rounded-3xl p-6 shadow-2xl space-y-4">
                     <div>
                         <p class="text-xs font-bold text-[#ffd500] uppercase tracking-wider">Papan Peringkat internal</p>

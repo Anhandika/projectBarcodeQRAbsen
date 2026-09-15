@@ -37,9 +37,9 @@ class StudentDashboardController extends Controller
             ],
             'month' => [
                 'total' => $monthAttendances->count(),
-                'hadir' => $monthAttendances->where('result', AttendanceResult::SUCCESS->value)->count(),
-                        'terlambat' => $monthAttendances->whereNot('result', AttendanceResult::SUCCESS->value)->whereNot('result', AttendanceResult::OUTSIDE_AREA->value)->count(),
-                'di_luar' => $monthAttendances->where('result', AttendanceResult::OUTSIDE_AREA->value)->count(),
+                'hadir' => $monthAttendances->where('result', AttendanceResult::SUCCESS)->count(),
+                'terlambat' => $monthAttendances->whereIn('result', [AttendanceResult::EXPIRED, AttendanceResult::DUPLICATE])->count(),
+                'di_luar' => $monthAttendances->where('result', AttendanceResult::OUTSIDE_AREA)->count(),
             ],
         ];
 
@@ -50,7 +50,7 @@ class StudentDashboardController extends Controller
             ->get();
 
         $teacherRankings = collect();
-        if ($user->role === UserRole::GURU) {
+        if ($user->role === UserRole::GURU || $user->role?->value === 'guru') {
             $teacherRankings = User::query()
                 ->where('role', UserRole::GURU->value)
                 ->where('active', true)
