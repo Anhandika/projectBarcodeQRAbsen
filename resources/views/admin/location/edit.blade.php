@@ -1,107 +1,156 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-[1000px] mx-auto">
-    <div class="mb-6 animate-[fadeIn_.6s_ease]">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('images/logo-smk.png') }}" alt="Logo" class="h-10 w-10 rounded-xl bg-white p-1.5 shadow-sm border border-school-line">
-                <div>
-                    <h1 class="school-display text-xl font-bold text-[#0f1e3d]">Lokasi Sekolah</h1>
-                    <p class="text-xs text-[#68748b]">Atur koordinat & radius absensi SMK Bina Utama</p>
-                </div>
+{{-- Include Leaflet Asset Map Library via CDN --}}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<div class="max-w-[1280px] mx-auto px-2 sm:px-4">
+    <div class="mb-6">
+        <div class="flex items-center gap-3">
+            <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-[#0f1e3d] to-[#2c68f5] flex items-center justify-center text-white text-xl shadow-md">
+                <i class="ti ti-map-2"></i>
+            </div>
+            <div>
+                <h1 class="font-display text-2xl font-black text-[#0f1e3d]">Konfigurasi Geofencing Sekolah</h1>
+                <p class="text-xs text-[#68748b]">Atur koordinat pusat instansi dan batasan radius pemindaian absensi</p>
             </div>
         </div>
     </div>
 
     @if(session('ok'))
-    <div class="mb-4 animate-[slideIn_.4s_ease] rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 flex items-center justify-between">
+    <div class="mb-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 text-sm text-emerald-800 font-medium flex items-center justify-between shadow-sm">
         <span class="flex items-center gap-2">
-            <i class="ti ti-circle-check"></i>
+            <i class="ti ti-circle-check text-emerald-600 text-lg"></i>
             {{ session('ok') }}
         </span>
-        <button @click="$el.parentElement.remove()" class="text-green-500 hover:text-green-700"><i class="ti ti-x"></i></button>
+        <button @click="$el.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700"><i class="ti ti-x"></i></button>
     </div>
     @endif
 
-    <div class="grid gap-6 lg:grid-cols-[1fr_380px]">
-        {{-- Form --}}
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-school-line shadow-sm p-6 sm:p-8 animate-[fadeInUp_.5s_ease]">
-            <div class="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-gradient-to-br from-[#2c68f5]/10 to-[#8ea8ff]/10 blur"></div>
-            <form method="POST" action="{{ route('admin.location.update') }}" class="space-y-5" id="locationForm">@csrf @method('PUT')
+    <div class="grid gap-6 lg:grid-cols-[1fr_400px]">
+        {{-- Form Configuration Card --}}
+        <div class="relative overflow-hidden rounded-3xl bg-white border border-school-line shadow-sm p-6 sm:p-8">
+            <div class="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-gradient-to-br from-[#2c68f5]/10 to-[#623ed8]/10 blur-xl"></div>
+
+            <form method="POST" action="{{ route('admin.location.update') }}" class="space-y-5" id="locationForm">
+                @csrf
+                @method('PUT')
+
                 <div>
-                    <label class="text-sm font-semibold text-[#172033] block mb-1.5">Nama Sekolah</label>
-                    <input name="name" value="{{ old('name',$school->name) }}" required class="w-full h-11 rounded-xl border border-[#e3e8f0] bg-white px-3.5 text-sm focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10">
+                    <label class="text-xs font-bold uppercase tracking-wider text-[#0f1e3d] block mb-1.5">Nama Instansi / Sekolah</label>
+                    <input name="name" id="inputName" value="{{ old('name', $school->name) }}" required class="w-full h-11 rounded-xl border border-school-line bg-white px-3.5 text-sm font-semibold text-[#172033] focus:border-[#2c68f5] focus:outline-none transition">
                 </div>
+
                 <div>
-                    <label class="text-sm font-semibold text-[#172033] block mb-1.5">Alamat</label>
-                    <input name="address" value="{{ old('address',$school->address) }}" class="w-full h-11 rounded-xl border border-[#e3e8f0] bg-white px-3.5 text-sm focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10" placeholder="Jl. Contoh No. 123, Kota">
+                    <label class="text-xs font-bold uppercase tracking-wider text-[#0f1e3d] block mb-1.5">Alamat Jalan Lengkap</label>
+                    <input name="address" id="inputAddress" value="{{ old('address', $school->address) }}" class="w-full h-11 rounded-xl border border-school-line bg-white px-3.5 text-sm text-[#172033] focus:border-[#2c68f5] focus:outline-none transition" placeholder="Jl. Raya Utama No. 123, Kendal">
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
-                        <label class="text-sm font-semibold text-[#172033] block mb-1.5">Latitude</label>
-                        <input name="latitude" type="number" step="0.0000001" value="{{ old('latitude',$school->latitude) }}" required class="w-full h-11 rounded-xl border border-[#e3e8f0] bg-white px-3.5 text-sm focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10" placeholder="-6.9182000">
+                        <label class="text-xs font-bold uppercase tracking-wider text-[#0f1e3d] block mb-1.5">Titik Latitude</label>
+                        <input name="latitude" id="inputLat" type="number" step="0.0000001" value="{{ old('latitude', $school->latitude) }}" required class="w-full h-11 rounded-xl border border-school-line bg-white px-3.5 text-sm font-mono focus:border-[#2c68f5] focus:outline-none transition" placeholder="-6.9182000">
                     </div>
                     <div>
-                        <label class="text-sm font-semibold text-[#172033] block mb-1.5">Longitude</label>
-                        <input name="longitude" type="number" step="0.0000001" value="{{ old('longitude',$school->longitude) }}" required class="w-full h-11 rounded-xl border border-[#e3e8f0] bg-white px-3.5 text-sm focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10" placeholder="110.2056000">
+                        <label class="text-xs font-bold uppercase tracking-wider text-[#0f1e3d] block mb-1.5">Titik Longitude</label>
+                        <input name="longitude" id="inputLng" type="number" step="0.0000001" value="{{ old('longitude', $school->longitude) }}" required class="w-full h-11 rounded-xl border border-school-line bg-white px-3.5 text-sm font-mono focus:border-[#2c68f5] focus:outline-none transition" placeholder="110.2056000">
                     </div>
                 </div>
 
                 <div>
-                    <label class="text-sm font-semibold text-[#172033] block mb-1.5">Radius Absensi (meter)</label>
-                    <input name="radius_meters" type="number" min="10" max="5000" value="{{ old('radius_meters',$school->radius_meters) }}" required class="w-full h-11 rounded-xl border border-[#e3e8f0] bg-white px-3.5 text-sm focus:border-[#2c68f5] focus:ring-[3px] focus:ring-[#2c68f5]/10" placeholder="80">
-                    <p class="mt-1 text-xs text-[#8a95a8]">Jarak maksimal dari titik sekolah untuk absensi valid (10-5000m)</p>
+                    <label class="text-xs font-bold uppercase tracking-wider text-[#0f1e3d] block mb-1.5">Radius Batasan Kehadiran (meter)</label>
+                    <input name="radius_meters" id="inputRadius" type="number" min="10" max="5000" value="{{ old('radius_meters', $school->radius_meters) }}" required class="w-full h-11 rounded-xl border border-school-line bg-white px-3.5 text-sm font-bold focus:border-[#2c68f5] focus:outline-none transition" placeholder="80">
+                    <p class="mt-1 text-[11px] text-[#8a95a8] leading-relaxed">Jarak radius sirkular aman dari titik koordinat pusat sekolah bagi siswa/guru (direkomendasikan: 50m - 150m).</p>
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" class="w-full h-11 rounded-xl bg-gradient-to-r from-[#1a3a7a] to-[#2c68f5] text-white font-bold text-sm shadow-[0_8px_20px_rgba(44,104,245,.35)] hover:shadow-[0_10px_28px_rgba(44,104,245,.45)] active:translate-y-[1px] transition flex items-center justify-center gap-2">
-                        <i class="ti ti-device-floppy"></i> Simpan Lokasi & Radius
+                    <button type="submit" class="w-full h-11 rounded-xl bg-gradient-to-r from-[#0f1e3d] to-[#2c68f5] text-white font-bold text-xs shadow-lg shadow-[#0f1e3d]/20 hover:opacity-95 transition flex items-center justify-center gap-2">
+                        <i class="ti ti-device-floppy text-sm"></i> Simpan Parameter Geofencing
                     </button>
                 </div>
             </form>
         </div>
 
-        {{-- Info Panel --}}
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-school-line shadow-sm animate-[fadeInUp_.5s_ease_.1s]">
-            <div class="absolute -top-4 -right-4 h-24 w-24 rounded-full bg-gradient-to-br from-[#167a67]/10 to-[#2cf0b8]/10 blur"></div>
-            <div class="p-5 border-b border-school-line">
-                <div>
-                    <p class="text-[10px] font-bold uppercase tracking-[0.16em] text-[#623ed8]">Status Validasi</p>
-                    <h3 class="school-display text-lg font-bold text-[#0f1e3d]">Metode Geofencing</h3>
-                </div>
+        {{-- Live Render Maps Panel --}}
+        <div class="rounded-3xl border border-school-line bg-white shadow-sm overflow-hidden flex flex-col justify-between">
+            <div class="p-5 border-b border-school-line bg-[#f8f9fc]">
+                <p class="text-[9px] font-black uppercase tracking-widest text-[#623ed8]">Pratinjau Live Peta</p>
+                <h3 class="font-display text-base font-bold text-[#0f1e3d] mt-0.5">Visualisasi Radius Maps</h3>
             </div>
-            <div class="p-6">
-                <div class="flex flex-col items-center justify-center text-center py-8 bg-school-canvas rounded-xl border border-dashed border-school-line">
-                    <div class="h-16 w-16 rounded-full bg-[#2c68f5]/10 flex items-center justify-center mb-4">
-                        <i class="ti ti-map-pin text-3xl text-[#2c68f5]"></i>
-                    </div>
-                    <h4 class="font-bold text-[#0f1e3d] mb-2">Peta Dinonaktifkan</h4>
-                    <p class="text-sm text-[#8a95a8] max-w-[280px]">Lokasi sekolah divalidasi menggunakan koordinat presisi tinggi untuk keamanan data.</p>
-                </div>
 
-                <div class="mt-6 space-y-4">
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-[#8a95a8]">Validasi GPS</span>
-                        <span class="font-bold text-green-600 flex items-center gap-1.5"><i class="ti ti-circle-check"></i> Aktif</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm border-t border-school-line pt-4">
-                        <span class="text-[#8a95a8]">Radius Aktif</span>
-                        <span class="font-bold text-[#0f1e3d]">{{ $school->radius_meters }} meter</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm border-t border-school-line pt-4">
-                        <span class="text-[#8a95a8]">Zona Waktu</span>
-                        <span class="font-bold text-[#0f1e3d]">{{ $school->timezone }}</span>
-                    </div>
-                </div>
+            {{-- Map Element Container --}}
+            <div class="p-4 flex-1">
+                <div id="schoolLiveMap" class="w-full h-[260px] rounded-2xl border border-school-line shadow-inner relative z-10 bg-slate-100"></div>
+            </div>
 
-                <div class="mt-8 p-4 rounded-xl bg-blue-50 border border-blue-100 text-xs text-blue-700 flex gap-3">
-                    <i class="ti ti-info-circle text-lg shrink-0"></i>
-                    <p class="leading-relaxed">Pastikan koordinat yang dimasukkan sesuai dengan titik pusat sekolah agar siswa dapat melakukan absensi dengan lancar.</p>
+            <div class="p-5 bg-[#f8f9fc] border-t border-school-line space-y-3">
+                <div class="flex items-center justify-between text-xs font-medium">
+                    <span class="text-[#8a95a8]">Status GPS</span>
+                    <span class="font-bold text-emerald-600 flex items-center gap-1"><i class="ti ti-circle-check"></i> Geofence Aktif</span>
+                </div>
+                <div class="flex items-center justify-between text-xs font-medium border-t border-school-line pt-2.5">
+                    <span class="text-[#8a95a8]">Radius Terkunci</span>
+                    <span class="font-bold text-[#0f1e3d]" id="lblRadius">{{ $school->radius_meters }} Meter</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch current values
+        let lat = parseFloat(document.getElementById('inputLat').value) || -6.9182000;
+        let lng = parseFloat(document.getElementById('inputLng').value) || 110.2056000;
+        let radius = parseInt(document.getElementById('inputRadius').value) || 80;
+
+        // Initialize live leaflet map view
+        const map = L.map('schoolLiveMap').setView([lat, lng], 16);
+
+        // Add high fidelity OpenStreetMap tile layer tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Append precision school marker pin
+        let schoolMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+        // Append bounding circular geofencing zone
+        let geofenceCircle = L.circle([lat, lng], {
+            color: '#2c68f5',
+            fillColor: '#2c68f5',
+            fillOpacity: 0.15,
+            radius: radius
+        }).addTo(map);
+
+        // Sync marker drag to inputs
+        schoolMarker.on('dragend', function (e) {
+            let position = schoolMarker.getLatLng();
+            document.getElementById('inputLat').value = position.lat.toFixed(7);
+            document.getElementById('inputLng').value = position.lng.toFixed(7);
+            geofenceCircle.setLatLng(position);
+            map.panTo(position);
+        });
+
+        // Add real-time event change listeners to form fields for premium dynamic UI updates
+        const syncMapFromInputs = () => {
+            let nLat = parseFloat(document.getElementById('inputLat').value) || lat;
+            let nLng = parseFloat(document.getElementById('inputLng').value) || lng;
+            let nRadius = parseInt(document.getElementById('inputRadius').value) || radius;
+
+            let nPos = [nLat, nLng];
+            schoolMarker.setLatLng(nPos);
+            geofenceCircle.setLatLng(nPos);
+            geofenceCircle.setRadius(nRadius);
+            document.getElementById('lblRadius').innerText = nRadius + ' Meter';
+            map.setView(nPos);
+        };
+
+        document.getElementById('inputLat').addEventListener('input', syncMapFromInputs);
+        document.getElementById('inputLng').addEventListener('input', syncMapFromInputs);
+        document.getElementById('inputRadius').addEventListener('input', syncMapFromInputs);
+    });
+</script>
 @endsection

@@ -1,274 +1,161 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-b from-[#0f1e3d]/5 to-white" x-data="attendanceScanner({ scanUrl: '{{ route('attendance.scan.store') }}', demoToken: '{{ $demoQrToken }}' })">
-    
-    {{-- Mobile Header --}}
-    <div class="sticky top-0 z-40 bg-gradient-to-r from-[#1a3a7a] via-[#2c68f5] to-[#623ed8] shadow-lg">
-        <div class="mx-auto max-w-md px-4 py-4">
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex-1">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-white/70">SMK Bina Utama</p>
-                    <p class="text-sm font-bold text-white">Layar Absen</p>
-                </div>
-                <div class="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-sm">
-                    {{ str(auth()->user()->name)->substr(0,1)->upper() }}
-                </div>
+<div class="min-h-screen bg-gradient-to-br from-[#0f1e3d] via-[#111a31] to-[#1a3a7a] p-2 sm:p-6 text-white flex flex-col items-center justify-start" x-data="attendanceScanner({ scanUrl: '{{ route('attendance.scan.store') }}', demoToken: '{{ $demoQrToken }}' })">
+
+    {{-- Decorative Hologram Light Effects --}}
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-64 bg-[#2c68f5]/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+    {{-- Premium Voice Assistant Overlay Modal (Popup Sukses 3D) --}}
+    <div x-show="showSuccessPopup" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" style="display: none;">
+        <div class="bg-gradient-to-b from-white to-[#f8f9fc] text-[#0f1e3d] rounded-3xl p-8 max-w-sm w-full text-center shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,1)] border border-white relative overflow-hidden transform">
+            {{-- 3D Success Ring Elements --}}
+            <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white text-4xl shadow-xl shadow-emerald-500/30">
+                <i class="ti ti-circle-check-filled animate-pulse"></i>
             </div>
+
+            <h2 class="text-2xl font-black font-display text-emerald-600 tracking-tight">ABSENSI BERHASIL!</h2>
+            <p class="text-xs text-[#8a95a8] font-mono tracking-widest mt-1 uppercase font-bold">Mengisi Antrean Otomatis</p>
+
+            <div class="bg-[#f2f5fa] rounded-2xl p-4 my-4 border border-school-line text-left">
+                <p class="text-[10px] uppercase font-bold text-[#8a95a8] tracking-wider">Identitas Pengguna</p>
+                <p class="text-sm font-black text-[#0f1e3d] mt-0.5">{{ $activeUser->name }}</p>
+                <p class="text-xs text-[#68748b] font-medium mt-0.5">ID: {{ $activeUser->identifier }} · {{ $activeUser->class_name ?? 'Staf' }}</p>
+            </div>
+
+            <div class="flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 bg-indigo-50 py-2.5 px-4 rounded-xl border border-indigo-100">
+                <i class="ti ti-volume text-base animate-bounce"></i>
+                <span id="ttsStatusMsg">Menunggu Google Voice Selesai...</span>
+            </div>
+
+            <p class="text-[10px] text-[#8a95a8] mt-4 font-semibold animate-pulse">Sistem membeku sejenak untuk menghindari double-scan</p>
         </div>
     </div>
 
-    <div class="mx-auto max-w-md px-4 py-4 space-y-4 pb-24">
-        
-        {{-- User Info Card --}}
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-[#e3e8f0] shadow-sm p-4">
+    <div class="w-full max-w-md space-y-5 pb-24 relative z-10">
+
+        {{-- Professional Glassmorphic Header --}}
+        <div class="bg-white/10 backdrop-blur-xl border border-white/15 rounded-2xl p-4 flex items-center justify-between gap-3 shadow-lg">
+            <div>
+                <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-[#ffd500]">SMK Bina Utama Kendal</p>
+                <h1 class="text-base font-black tracking-tight text-white mt-0.5">Pemindai QR Code</h1>
+            </div>
+            <span class="inline-flex px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-gradient-to-r from-[#2c68f5] to-[#623ed8] border border-white/10">
+                Live Scanner
+            </span>
+        </div>
+
+        {{-- User Identity Sub-Card --}}
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between shadow-inner">
+            <div class="min-w-0 flex-1">
+                <p class="text-[10px] text-white/50 uppercase tracking-widest font-bold">Masuk Sebagai</p>
+                <h2 class="text-base font-black truncate text-white mt-0.5">{{ $activeUser->name }}</h2>
+                <p class="text-xs text-white/60 font-mono mt-0.5">{{ $activeUser->identifier }} • {{ $activeUser->class_name ?? 'Staf Sekolah' }}</p>
+            </div>
+            <div class="h-10 w-10 bg-white/10 rounded-xl flex items-center justify-center text-sm font-bold border border-white/10 text-[#ffd500]">
+                {{ str($activeUser->name)->substr(0,1)->upper() }}
+            </div>
+        </div>
+
+        {{-- Geolocation Tracker Card --}}
+        <div class="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
-                <div class="flex-1">
-                    <p class="text-xs text-[#8a95a8] font-semibold">Pemindai sebagai</p>
-                    <h2 class="text-lg font-bold text-[#0f1e3d] mt-1">{{ $activeUser->name }}</h2>
-                    <p class="text-xs text-[#68748b] mt-1">{{ $activeUser->role?->label() }} • {{ $activeUser->identifier }}</p>
-                </div>
-                @if($activeUser->class_name)
-                <span class="inline-flex items-center rounded-lg bg-[#f2f5fa] px-3 py-1.5 text-xs font-semibold text-[#623ed8]">
-                    {{ $activeUser->class_name }}
-                </span>
-                @endif
-            </div>
-        </div>
-
-        {{-- Status Messages --}}
-        @if(session('error'))
-        <div class="animate-slideIn rounded-2xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 flex items-center gap-3">
-            <i class="ti ti-alert-circle text-lg"></i>
-            <span class="flex-1">{{ session('error') }}</span>
-        </div>
-        @endif
-
-        {{-- Location Status Card --}}
-        <div class="group relative overflow-hidden rounded-2xl bg-white border border-[#e3e8f0] shadow-sm">
-            <div class="p-4 space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-[#623ed8]">Lokasi GPS</p>
-                        <h3 class="text-lg font-bold text-[#0f1e3d] mt-1">
-                            <span x-text="locationState === 'ready' ? '✓ Siap' : locationState === 'loading' ? '⏳ Mencari...' : '✗ Belum'"></span>
-                        </h3>
-                    </div>
-                    <div class="text-right text-xs text-[#8a95a8]" x-show="accuracy !== null">
-                        <div><strong x-text="accuracy ? Math.round(accuracy) + 'm' : '-'"></strong></div>
-                        <div>akurasi</div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="rounded-xl bg-[#f2f5fa] p-3 text-center">
-                        <div class="text-[#8a95a8] mb-1">Latitude</div>
-                        <div class="font-mono font-bold text-[#172033]" x-text="latitude ? latitude.toFixed(6) : '--'"></div>
-                    </div>
-                    <div class="rounded-xl bg-[#f2f5fa] p-3 text-center">
-                        <div class="text-[#8a95a8] mb-1">Longitude</div>
-                        <div class="font-mono font-bold text-[#172033]" x-text="longitude ? longitude.toFixed(6) : '--'"></div>
-                    </div>
-                </div>
-
-                <button 
-                    type="button" 
-                    @click="locate" 
-                    :disabled="locationState === 'loading'"
-                    class="w-full bg-gradient-to-r from-[#2c68f5] to-[#1a3a7a] text-white rounded-xl py-2.5 font-semibold text-sm hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                    <i class="ti" :class="locationState === 'loading' ? 'ti-loader animate-spin' : 'ti-map-pin'"></i>
-                    <span x-text="locationState === 'loading' ? 'Mencari Lokasi...' : 'Periksa Lokasi GPS'"></span>
-                </button>
-            </div>
-        </div>
-
-        {{-- QR Scanner Section --}}
-        <div class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a3a7a] to-[#2c68f5] shadow-lg">
-            <div class="p-4">
-                <div class="mb-3">
-                    <p class="text-xs font-bold uppercase tracking-widest text-white/70">Pemindai QR</p>
-                    <h3 class="text-lg font-bold text-white mt-1">Pindai QR Dinamis</h3>
-                    <p class="text-xs text-white/60 mt-1">Posisikan QR dalam bingkai untuk memulai absensi</p>
-                </div>
-
-                {{-- Camera Frame --}}
-                <div class="relative overflow-hidden rounded-xl bg-[#0f1e3d] mb-4">
-                    <div id="qr-reader" class="w-full aspect-square bg-[#0f1e3d]"></div>
-                    <div class="absolute inset-0 border-2 border-white/30 rounded-xl pointer-events-none">
-                        <div class="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white"></div>
-                        <div class="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-white"></div>
-                        <div class="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-white"></div>
-                        <div class="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white"></div>
-                    </div>
-                </div>
-
-                {{-- Camera Controls --}}
-                <div class="space-y-2">
-                    <button 
-                        type="button" 
-                        @click="startCamera" 
-                        :disabled="scannerState === 'submitting' || scannerState === 'scanning' || locationState !== 'ready'"
-                        class="w-full bg-white text-[#1a3a7a] rounded-xl py-2.5 font-semibold text-sm hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                        <i class="ti" :class="scannerState === 'scanning' ? 'ti-loader animate-spin' : 'ti-camera'"></i>
-                        <span x-text="scannerState === 'scanning' ? 'Kamera Aktif...' : 'Buka Kamera'"></span>
-                    </button>
-
-                    <button 
-                        type="button" 
-                        @click="useDemoToken"
-                        class="w-full bg-white/20 text-white border border-white/30 rounded-xl py-2.5 font-semibold text-sm hover:bg-white/30 transition-all flex items-center justify-center gap-2"
-                    >
-                        <i class="ti ti-qrcode"></i>
-                        <span>Gunakan Token Demo</span>
-                    </button>
-                </div>
-
-                {{-- Message --}}
-                <div class="mt-4 text-xs text-white/70 text-center">
-                    <span x-text="locationState !== 'ready' ? '⚠ Aktifkan GPS terlebih dahulu' : 'Pastikan pencahayaan cukup'"></span>
-                </div>
-            </div>
-        </div>
-
-        {{-- Response Card --}}
-        <div x-show="scannerState === 'result'" class="animate-slideIn group relative overflow-hidden rounded-2xl shadow-lg" :class="{
-            'bg-green-50 border border-green-200': result === 'success',
-            'bg-yellow-50 border border-yellow-200': result === 'late',
-            'bg-red-50 border border-red-200': result === 'outside',
-            'bg-gray-50 border border-gray-200': result === 'expired' || result === 'duplicate'
-        }">
-            <div class="p-6 space-y-4 text-center">
-                {{-- Result Icon --}}
-                <div class="flex justify-center">
-                    <div class="h-16 w-16 rounded-full flex items-center justify-center text-3xl" :class="{
-                        'bg-green-100': result === 'success',
-                        'bg-yellow-100': result === 'late',
-                        'bg-red-100': result === 'outside',
-                        'bg-gray-100': result === 'expired' || result === 'duplicate'
-                    }">
-                        <i class="ti" :class="{
-                            'ti-circle-check text-green-700': result === 'success',
-                            'ti-clock-exclamation text-yellow-700': result === 'late',
-                            'ti-map-pin-off text-red-700': result === 'outside',
-                            'ti-alert-circle text-gray-700': result === 'expired' || result === 'duplicate'
-                        }"></i>
-                    </div>
-                </div>
-
-                {{-- Result Message --}}
                 <div>
-                    <h2 class="text-xl font-bold mb-1" :class="{
-                        'text-green-700': result === 'success',
-                        'text-yellow-700': result === 'late',
-                        'text-red-700': result === 'outside',
-                        'text-gray-700': result === 'expired' || result === 'duplicate'
-                    }" x-text="
-                        result === 'success' ? 'Berhasil Tercatat!' :
-                        result === 'late' ? 'Terlambat' :
-                        result === 'outside' ? 'Di Luar Area' :
-                        result === 'expired' ? 'QR Kadaluarsa' :
-                        'Sudah Tercatat'
-                    "></h2>
-                    <p class="text-sm mt-2" x-text="responseMessage"></p>
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-[#ffd500]">Koordinat Validasi GPS</p>
+                    <h3 class="text-sm font-bold text-white mt-0.5 flex items-center gap-1.5">
+                        <i class="ti ti-map-pin text-base text-[#2c68f5]"></i>
+                        <span x-text="locationState === 'ready' ? '✓ Posisi GPS Terkunci' : locationState === 'loading' ? '⏳ Mengunci Satelit...' : '⚠ GPS Belum Siap'"></span>
+                    </h3>
                 </div>
+                <span class="text-[10px] font-bold px-2 py-0.5 bg-black/20 rounded font-mono text-white/80" x-show="accuracy !== null">
+                    ±<span x-text="accuracy ? Math.round(accuracy) + 'm' : '-'"></span> Acc
+                </span>
+            </div>
 
-                {{-- Validation Steps --}}
-                <div class="mt-4 space-y-2" x-show="Object.keys(steps).length > 0">
-                    <template x-for="(step, key) in steps" :key="key">
-                        <div class="flex items-center gap-2 text-sm px-4 py-2 rounded-lg" :class="{
-                            'bg-green-100 text-green-700': step.success,
-                            'bg-red-100 text-red-700': !step.success
-                        }">
-                            <i class="ti text-lg" :class="step.success ? 'ti-circle-check' : 'ti-x'"></i>
-                            <span class="text-xs" x-text="step.message"></span>
-                        </div>
-                    </template>
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                <div class="bg-black/20 rounded-xl p-2.5 border border-white/5 text-center">
+                    <span class="text-white/40 block">Latitude</span>
+                    <strong class="text-white block mt-0.5" x-text="latitude ? latitude.toFixed(6) : '--'"></strong>
                 </div>
+                <div class="bg-black/20 rounded-xl p-2.5 border border-white/5 text-center">
+                    <span class="text-white/40 block">Longitude</span>
+                    <strong class="text-white block mt-0.5" x-text="longitude ? longitude.toFixed(6) : '--'"></strong>
+                </div>
+            </div>
 
-                {{-- Action Button --}}
-                <button 
-                    @click="resetForScan"
-                    class="w-full bg-gradient-to-r from-[#2c68f5] to-[#1a3a7a] text-white rounded-xl py-2.5 font-semibold text-sm hover:shadow-lg transition-all"
-                >
-                    Pindai Lagi
+            <button type="button" @click="locate" :disabled="locationState === 'loading'" class="w-full h-11 bg-white/10 border border-white/15 text-white hover:bg-white/20 transition rounded-xl text-xs font-bold flex items-center justify-center gap-2 disabled:opacity-50">
+                <i class="ti" :class="locationState === 'loading' ? 'ti-loader animate-spin' : 'ti-target-arrow'"></i>
+                <span x-text="locationState === 'loading' ? 'Menghubungkan Satelit...' : 'Sinkronisasi Posisi GPS Anda'"></span>
+            </button>
+        </div>
+
+        {{-- Camera Scanner Container Box --}}
+        <div class="bg-gradient-to-b from-[#1a3a7a] to-[#0f1e3d] border border-white/15 rounded-3xl p-5 shadow-2xl relative overflow-hidden">
+            <div class="mb-4">
+                <h3 class="text-sm font-bold text-white">Bingkai Kamera QR</h3>
+                <p class="text-[11px] text-white/60 mt-0.5">Posisikan kode batang sirkular dalam area tangkap radar di bawah ini</p>
+            </div>
+
+            {{-- Capture Window Frame --}}
+            <div class="relative w-full aspect-square bg-black rounded-2xl overflow-hidden border border-white/10 shadow-inner">
+                <div id="qr-reader" class="w-full h-full bg-black"></div>
+
+                {{-- Radar 3D Overlay lines --}}
+                <div class="absolute inset-0 pointer-events-none border-2 border-white/10 rounded-2xl">
+                    <div class="absolute inset-8 border border-dashed border-[#2c68f5]/40 rounded-xl animate-pulse"></div>
+                    <div class="absolute top-2 left-2 w-6 h-6 border-t-2 border-l-2 border-[#ffd500]"></div>
+                    <div class="absolute top-2 right-2 w-6 h-6 border-t-2 border-r-2 border-[#ffd500]"></div>
+                    <div class="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-[#ffd500]"></div>
+                    <div class="absolute bottom-2 right-2 w-6 h-6 border-b-2 border-r-2 border-[#ffd500]"></div>
+                </div>
+            </div>
+
+            <div class="mt-4 space-y-2">
+                <button type="button" @click="startCamera" :disabled="scannerState === 'scanning' || locationState !== 'ready'" class="w-full h-11 bg-gradient-to-r from-[#2c68f5] to-[#623ed8] text-white font-bold text-xs rounded-xl shadow-md disabled:opacity-40 flex items-center justify-center gap-2">
+                    <i class="ti ti-camera text-sm"></i>
+                    <span x-text="scannerState === 'scanning' ? 'Radar Kamera Aktif' : 'Aktifkan Kamera Pemindai'"></span>
+                </button>
+
+                <button type="button" @click="useDemoToken" class="w-full h-10 bg-white/5 border border-white/10 text-white text-xs font-semibold rounded-xl hover:bg-white/10 transition">
+                    Gunakan Kode Token Demo Kehadiran
                 </button>
             </div>
         </div>
 
-        {{-- Info Section --}}
-        <div class="rounded-2xl bg-white border border-[#e3e8f0] shadow-sm p-4">
-            <div class="flex items-start gap-3">
-                <i class="ti ti-info-circle text-lg text-[#623ed8] flex-shrink-0 mt-1"></i>
-                <div class="text-xs text-[#68748b] space-y-1">
-                    <p><strong>Persyaratan Absensi:</strong></p>
-                    <ul class="list-disc list-inside space-y-1 ml-1">
-                        <li>GPS aktif dan akurasi < 150m</li>
-                        <li>Berada dalam radius 80m dari sekolah</li>
-                        <li>Belum absen pada hari yang sama</li>
-                    </ul>
-                </div>
-            </div>
+        {{-- Fallback Non-Success Result Alert Box --}}
+        <div x-show="scannerState === 'result' && result !== 'success'" class="animate-slideIn bg-white rounded-2xl p-4 text-[#0f1e3d] text-center font-semibold shadow-xl border border-white/20">
+            <p class="text-sm text-red-600" x-text="responseMessage"></p>
+            <button @click="resetForScan" class="mt-3 px-4 py-1.5 bg-[#f2f5fa] border border-school-line text-xs font-bold rounded-lg text-[#0f1e3d]">Pindai Ulang</button>
         </div>
     </div>
 
-    {{-- Mobile Bottom Navigation --}}
-    <div class="fixed bottom-0 left-0 right-0 mx-auto max-w-md bg-white border-t border-[#e3e8f0] shadow-2xl">
+    {{-- Bottom Floating Nav bar --}}
+    <div class="fixed bottom-4 left-4 right-4 mx-auto max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-xl overflow-hidden">
         <nav class="flex items-center justify-around">
-            <a href="{{ route('student.dashboard') }}" class="flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 text-center transition text-[#8a95a8] hover:text-[#172033]">
-                <i class="ti ti-calendar-event text-lg"></i>
-                <span class="text-xs font-semibold">Absensi</span>
+            <a href="{{ route('student.dashboard') }}" class="flex-1 flex flex-col items-center justify-center gap-0.5 py-3 px-2 text-center transition text-white/60 hover:text-white">
+                <i class="ti ti-layout-dashboard text-lg"></i>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Dashboard</span>
             </a>
-            <a href="{{ route('attendance.scan') }}" class="flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 text-center transition text-[#623ed8]">
+            <a href="{{ route('attendance.scan') }}" class="flex-1 flex flex-col items-center justify-center gap-0.5 py-3 px-2 text-center transition text-[#ffd500]">
                 <i class="ti ti-qrcode text-lg"></i>
-                <span class="text-xs font-semibold">Scan</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Scan QR</span>
             </a>
-            <a href="{{ route('student.profile') }}" class="flex-1 flex flex-col items-center justify-center gap-1 py-3 px-2 text-center transition text-[#8a95a8] hover:text-[#172033]">
+            <a href="{{ route('student.profile') }}" class="flex-1 flex flex-col items-center justify-center gap-0.5 py-3 px-2 text-center transition text-white/60 hover:text-white">
                 <i class="ti ti-user text-lg"></i>
-                <span class="text-xs font-semibold">Profil</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Profil Anda</span>
             </a>
         </nav>
     </div>
 </div>
 
-<style>
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-slideIn {
-    animation: slideIn 0.3s ease-out;
-}
-
-#qr-reader {
-    background-color: #0f1e3d !important;
-}
-
-#qr-reader__dashboard {
-    display: none !important;
-}
-
-#qr-reader__scan_region {
-    border: none !important;
-}
-</style>
-
-@push('scripts')
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script>
 function attendanceScanner({ scanUrl, demoToken }) {
     return {
         scanUrl,
         demoToken,
-        scannerState: 'idle', // idle, scanning, submitting, result, error
-        locationState: 'idle', // idle, loading, ready, error
+        scannerState: 'idle',
+        locationState: 'idle',
         latitude: null,
         longitude: null,
         accuracy: null,
@@ -276,18 +163,12 @@ function attendanceScanner({ scanUrl, demoToken }) {
         camera: null,
         cameraRunning: false,
         result: null,
-        responseMessage: 'Menunggu pemindaian...',
-        steps: {},
+        responseMessage: '',
+        showSuccessPopup: false,
 
         async locate() {
             if (this.locationState === 'loading') return;
             this.locationState = 'loading';
-
-            if (!navigator.geolocation) {
-                this.locationState = 'error';
-                this.responseMessage = 'Geolokasi tidak didukung di browser Anda.';
-                return;
-            }
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -296,11 +177,11 @@ function attendanceScanner({ scanUrl, demoToken }) {
                     this.accuracy = position.coords.accuracy;
                     this.locationState = 'ready';
                 },
-                (error) => {
+                () => {
                     this.locationState = 'error';
-                    this.responseMessage = 'Gagal mendapatkan lokasi. Pastikan izin GPS diberikan.';
+                    alert('Gagal melacak koordinat GPS. Pastikan setelan lokasi perangkat aktif!');
                 },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             );
         },
 
@@ -308,7 +189,6 @@ function attendanceScanner({ scanUrl, demoToken }) {
             if (this.locationState !== 'ready') {
                 await this.locate();
             }
-
             if (this.locationState !== 'ready' || this.cameraRunning) return;
 
             this.scannerState = 'scanning';
@@ -317,7 +197,7 @@ function attendanceScanner({ scanUrl, demoToken }) {
             try {
                 await this.camera.start(
                     { facingMode: 'environment' },
-                    { fps: 10, qrbox: { width: 220, height: 220 } },
+                    { fps: 15, qrbox: { width: 250, height: 250 } },
                     async (decodedText) => {
                         this.qrToken = decodedText;
                         await this.stopCamera();
@@ -326,28 +206,22 @@ function attendanceScanner({ scanUrl, demoToken }) {
                     () => {}
                 );
                 this.cameraRunning = true;
-            } catch (error) {
+            } catch (err) {
                 this.scannerState = 'error';
-                this.responseMessage = 'Kamera tidak dapat dibuka. Coba gunakan token demo.';
-                this.camera = null;
+                alert('Modul perangkat kamera gagal diaktifkan.');
             }
         },
 
         async stopCamera() {
             if (this.camera && this.cameraRunning) {
                 await this.camera.stop();
-                this.camera.clear();
             }
             this.cameraRunning = false;
             this.camera = null;
         },
 
         async submit() {
-            if (!this.qrToken || this.latitude === null || this.longitude === null) {
-                this.responseMessage = 'Lokasi dan token QR wajib tersedia.';
-                return;
-            }
-
+            if (!this.qrToken || this.latitude === null || this.longitude === null) return;
             this.scannerState = 'submitting';
 
             try {
@@ -358,7 +232,6 @@ function attendanceScanner({ scanUrl, demoToken }) {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     },
-                    credentials: 'same-origin',
                     body: JSON.stringify({
                         qr_token: this.qrToken,
                         latitude: this.latitude,
@@ -368,33 +241,83 @@ function attendanceScanner({ scanUrl, demoToken }) {
                 });
 
                 const payload = await response.json();
-                const resultMap = { outside_area: 'outside', duplicate: 'duplicate', expired: 'expired', success: 'success' };
-                this.result = resultMap[payload.result] ?? 'expired';
-                this.steps = payload.steps ?? {};
-                this.responseMessage = payload.message ?? 'Respons server diterima.';
-                this.scannerState = 'result';
-                
-                setTimeout(() => this.resetForScan(), 3000);
+                this.responseMessage = payload.message || '';
+
+                if (payload.result === 'success') {
+                    this.result = 'success';
+                    this.showSuccessPopup = true;
+
+                    // Activate Google Voice TTS (Web Speech API)
+                    this.playGoogleVoiceNotification("Absen berhasil dicatat. Terima kasih!");
+                } else {
+                    this.result = payload.result || 'expired';
+                    this.scannerState = 'result';
+                }
             } catch (error) {
                 this.scannerState = 'error';
-                this.responseMessage = 'Gagal mengirim hasil. Periksa koneksi internet.';
+                alert('Gagal tersambung dengan server absensi.');
+            }
+        },
+
+        playGoogleVoiceNotification(messageText) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(messageText);
+                utterance.lang = 'id-ID';
+                utterance.rate = 1.0;
+
+                // Try finding Indonesian standard/Google voice lines
+                const voices = window.speechSynthesis.getVoices();
+                const idVoice = voices.find(v => v.lang.includes('id') || v.name.includes('Indonesian') || v.name.includes('Google'));
+                if (idVoice) utterance.voice = idVoice;
+
+                utterance.onend = () => {
+                    const statusLbl = document.getElementById('ttsStatusMsg');
+                    if (statusLbl) statusLbl.innerText = "Selesai! Meregenerasi ulang...";
+
+                    // Hold frozen state for an extra 2.5 seconds to distribute students/prevent long queues clashing
+                    setTimeout(() => {
+                        this.showSuccessPopup = false;
+                        this.resetForScan();
+                    }, 2500);
+                };
+
+                window.speechSynthesis.speak(utterance);
+
+                // Fallback mechanism if voice synthesis fails or is muted by browser policies
+                setTimeout(() => {
+                    if (this.showSuccessPopup) {
+                        const statusLbl = document.getElementById('ttsStatusMsg');
+                        if (statusLbl) statusLbl.innerText = "Selesai! Meregenerasi ulang...";
+                        setTimeout(() => {
+                            this.showSuccessPopup = false;
+                            this.resetForScan();
+                        }, 2500);
+                    }
+                }, 4000);
+            } else {
+                // Fallback straight ahead if Speech API is not present
+                setTimeout(() => {
+                    this.showSuccessPopup = false;
+                    this.resetForScan();
+                }, 3500);
             }
         },
 
         useDemoToken() {
             this.qrToken = this.demoToken;
-            this.scannerState = 'submitting';
             this.submit();
         },
 
         resetForScan() {
             this.qrToken = '';
             this.scannerState = 'idle';
-            this.responseMessage = 'Pindai QR terbaru untuk memulai absensi.';
-            this.steps = {};
+            this.result = null;
+            this.showSuccessPopup = false;
         }
     }
 }
 </script>
-@endpush
 @endsection

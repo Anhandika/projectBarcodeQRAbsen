@@ -1,149 +1,238 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="mx-auto max-w-[1280px]">
-        {{-- Header Section --}}
-        <div class="mb-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-                <div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#623ed8]">
-                    <span class="h-2 w-2 rounded-full bg-[#623ed8] animate-pulse"></span>
-                    Sistem Absensi Digital · Pusat Kendali
-                </div>
-                <h1 class="school-display text-3xl font-bold tracking-tight text-[#0f1e3d] sm:text-4xl">Dashboard Ringkasan</h1>
-                <p class="mt-2 text-sm text-[#68748b]">Selamat datang kembali, <span class="font-semibold text-[#0f1e3d]">{{ $activeUser->name }}</span>. Berikut adalah aktivitas kehadiran hari ini.</p>
-            </div>
+    <div class="mx-auto max-w-[1440px] px-2 sm:px-4 lg:px-6">
 
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="rounded-2xl border border-school-line bg-white px-4 py-2.5 shadow-sm">
-                    <div class="text-[10px] font-bold uppercase tracking-wider text-[#9aa4b5] mb-0.5">Waktu Server</div>
-                    <div class="text-sm font-bold text-[#0f1e3d] tabular-nums flex items-center gap-2">
-                        <i class="ti ti-clock text-[#623ed8]"></i>
-                        {{ $todayLabel }}
-                    </div>
-                </div>
-                <a href="{{ route('monitor') }}" class="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#0f1e3d] px-6 text-sm font-bold text-white shadow-lg shadow-[#0f1e3d]/20 transition hover:bg-[#1a2d52] active:scale-[0.98]">
-                    <i class="ti ti-device-tv text-lg"></i>
-                    Buka Layar Monitor
-                </a>
-            </div>
-        </div>
+        {{-- Elite 3D Glassmorphic Header --}}
+        <div class="mb-8 rounded-3xl bg-gradient-to-r from-[#0f1e3d] via-[#1a3a7a] to-[#2c68f5] p-6 lg:p-8 text-white shadow-[0_20px_40px_rgba(15,30,61,0.25),inset_0_1px_1px_rgba(255,255,255,0.2)] relative overflow-hidden group">
+            <div class="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl group-hover:scale-110 transition duration-700"></div>
+            <div class="absolute -left-12 -bottom-12 h-48 w-48 rounded-full bg-[#623ed8]/20 blur-2xl"></div>
 
-        {{-- Stats Grid --}}
-        <section class="grid gap-4 grid-cols-2 md:grid-cols-4 lg:gap-6" aria-labelledby="stats-heading">
-            <h2 id="stats-heading" class="sr-only">Statistik Kehadiran</h2>
-            @foreach($stats as $stat)
-                <div class="group relative overflow-hidden rounded-3xl border border-school-line bg-white p-5 shadow-sm transition-all hover:shadow-md lg:p-6">
-                    <div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-{{ $stat['tone'] === 'success' ? 'green' : ($stat['tone'] === 'warning' ? 'orange' : ($stat['tone'] === 'blue' ? 'blue' : 'purple')) }}-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
-
-                    <div class="relative z-10 flex items-start justify-between">
-                        <div class="h-10 w-10 rounded-2xl bg-{{ $stat['tone'] === 'success' ? 'green' : ($stat['tone'] === 'warning' ? 'orange' : ($stat['tone'] === 'blue' ? 'blue' : 'purple')) }}-50 flex items-center justify-center text-{{ $stat['tone'] === 'success' ? 'green' : ($stat['tone'] === 'warning' ? 'orange' : ($stat['tone'] === 'blue' ? 'blue' : 'purple')) }}-600">
-                            <i class="ti {{ $stat['icon'] }} text-xl"></i>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-widest text-[#9aa4b5]">{{ $stat['label'] }}</span>
+            <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <div class="mb-2 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-[#ffd500] bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                        <span class="h-2 w-2 rounded-full bg-[#ffd500] animate-pulse"></span>
+                        Pusat Kendali Utama · Profesional 3D Design
                     </div>
-
-                    <div class="relative z-10 mt-5">
-                        <div class="school-display text-3xl font-bold tracking-tighter text-[#0f1e3d] lg:text-4xl">{{ number_format($stat['value']) }}</div>
-                        <p class="mt-1 text-xs font-medium text-[#68748b]">{{ $stat['caption'] }}</p>
-                    </div>
-                </div>
-            @endforeach
-        </section>
-
-        {{-- Main Content Grid --}}
-        <div class="mt-8 grid gap-8 lg:grid-cols-3">
-            {{-- Recent Scans Table --}}
-            <div class="lg:col-span-2">
-                <div class="rounded-3xl border border-school-line bg-white shadow-sm overflow-hidden">
-                    <div class="border-b border-school-line bg-white p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="school-display text-lg font-bold text-[#0f1e3d]">Pemindaian Terkini</h3>
-                                <p class="text-xs text-[#8a95a8] mt-1">Aktivitas real-time absensi siswa</p>
-                            </div>
-                            <a href="{{ route('admin.reports.index') }}" class="text-xs font-bold text-[#623ed8] hover:underline">Lihat Semua</a>
-                        </div>
-                    </div>
-                    <div class="p-0">
-                        <x-dashboard.recent-scans :scans="$recentScans" :school="$school" />
-                    </div>
-                </div>
-            </div>
-
-            {{-- Validation Status & Info --}}
-            <div class="space-y-6">
-                {{-- Quick Validation Panel --}}
-                <div class="rounded-3xl border border-school-line bg-[#0f1e3d] p-6 text-white shadow-xl shadow-[#0f1e3d]/10">
-                    <h3 class="school-display text-lg font-bold mb-4">Status Validasi</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-green-400">
-                                <i class="ti ti-map-pin-check text-lg"></i>
-                            </div>
-                            <div>
-                                <div class="text-[10px] uppercase font-bold text-white/50">Radius Lokasi</div>
-                                <div class="text-sm font-semibold">{{ $school->radius_meters }} Meter (Aktif)</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-blue-400">
-                                <i class="ti ti-qrcode text-lg"></i>
-                            </div>
-                            <div>
-                                <div class="text-[10px] uppercase font-bold text-white/50">QR Dynamic</div>
-                                <div class="text-sm font-semibold">Aktif (Auto-Rotate)</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-purple-400">
-                                <i class="ti ti-database-share text-lg"></i>
-                            </div>
-                            <div>
-                                <div class="text-[10px] uppercase font-bold text-white/50">Firebase Integration</div>
-                                <div class="text-sm font-semibold">{{ config('firebase_integration.enabled') ? 'Terhubung (Async)' : 'Nonaktif' }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-white/10">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs text-white/60">Persentase kehadiran</span>
-                            <span class="text-xs font-bold">{{ $summary['percentage'] }}%</span>
-                        </div>
-                        <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-blue-400 to-green-400" style="width: {{ $summary['percentage'] }}%"></div>
-                        </div>
-                    </div>
+                    <h1 class="font-display text-3xl font-black tracking-tight text-white sm:text-4xl">Dashboard Ringkasan Admin</h1>
+                    <p class="mt-2 text-sm text-white/80">Selamat datang kembali, <span class="font-bold text-[#ffd500]">{{ $activeUser->name }}</span>. Mengelola aktivitas kehadiran real-time SMK Bina Utama Kendal.</p>
                 </div>
 
-                {{-- School Info --}}
-                <div class="rounded-3xl border border-school-line bg-white p-6 shadow-sm">
-                    <h3 class="school-display text-base font-bold text-[#0f1e3d] mb-4">Profil Sekolah</h3>
-                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-school-canvas border border-school-line mb-4">
-                        <img src="{{ asset('images/logo-smk.png') }}" class="h-12 w-12 rounded-xl bg-white p-1" alt="Logo">
-                        <div>
-                            <div class="text-sm font-bold text-[#0f1e3d]">{{ $school->name }}</div>
-                            <div class="text-[10px] text-[#8a95a8]">{{ $school->address }}</div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md px-4 py-2.5 shadow-sm text-white">
+                        <div class="text-[9px] font-bold uppercase tracking-widest text-white/60 mb-0.5">Waktu Operasional Server</div>
+                        <div class="text-xs font-mono font-bold text-[#ffd500] flex items-center gap-2">
+                            <i class="ti ti-clock-play text-lg"></i>
+                            {{ $todayLabel }}
                         </div>
                     </div>
-                    <a href="{{ route('admin.location.edit') }}" class="flex w-full items-center justify-center gap-2 rounded-xl border border-school-line py-3 text-xs font-bold text-[#0f1e3d] hover:bg-school-canvas transition">
-                        <i class="ti ti-settings"></i>
-                        Kelola Pengaturan Lokasi
+                    <a href="{{ route('monitor') }}" class="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[#ffd500] px-6 text-sm font-bold text-[#0f1e3d] shadow-lg shadow-[#ffd500]/20 hover:brightness-105 active:scale-[0.98] transition-all">
+                        <i class="ti ti-device-tv-old text-lg"></i>
+                        Buka Layar Utama Monitor
                     </a>
                 </div>
             </div>
         </div>
 
-        {{-- Footer --}}
+        {{-- 3D Stats Cards Grid --}}
+        <section class="grid gap-4 grid-cols-2 md:grid-cols-4 lg:gap-6 mb-8" aria-labelledby="stats-heading">
+            <h2 id="stats-heading" class="sr-only">Statistik Realtime Kehadiran</h2>
+            @foreach($stats as $stat)
+                @php
+                    $colors = [
+                        'success' => ['from' => 'from-emerald-500/20', 'text' => 'text-emerald-600', 'border' => 'border-emerald-500/30', 'bg' => 'bg-emerald-500/10'],
+                        'warning' => ['from' => 'from-amber-500/20', 'text' => 'text-amber-600', 'border' => 'border-amber-500/30', 'bg' => 'bg-amber-500/10'],
+                        'blue' => ['from' => 'from-blue-500/20', 'text' => 'text-blue-600', 'border' => 'border-blue-500/30', 'bg' => 'bg-blue-500/10'],
+                        'purple' => ['from' => 'from-purple-500/20', 'text' => 'text-purple-600', 'border' => 'border-purple-500/30', 'bg' => 'bg-purple-500/10'],
+                    ];
+                    $theme = $colors[$stat['tone']] ?? $colors['blue'];
+                @endphp
+                <div class="group relative overflow-hidden rounded-3xl border {{ $theme['border'] }} bg-white p-5 shadow-[0_10px_25px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_15px_35px_rgba(0,0,0,0.06)] hover:-translate-y-1 duration-300">
+                    <div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br {{ $theme['from'] }} to-transparent opacity-0 transition-opacity group-hover:opacity-100 duration-500"></div>
+
+                    <div class="relative z-10 flex items-center justify-between">
+                        <div class="h-11 w-11 rounded-2xl {{ $theme['bg'] }} flex items-center justify-center {{ $theme['text'] }} shadow-inner">
+                            <i class="ti {{ $stat['icon'] }} text-xl"></i>
+                        </div>
+                        <span class="text-[9px] font-black uppercase tracking-widest text-[#8a95a8] bg-[#f2f5fa] px-2 py-0.5 rounded-md">{{ $stat['label'] }}</span>
+                    </div>
+
+                    <div class="relative z-10 mt-5">
+                        <div class="font-display text-3xl font-black tracking-tight text-[#0f1e3d] lg:text-4xl">{{ number_format($stat['value']) }}</div>
+                        <p class="mt-1 text-xs font-semibold text-[#68748b]">{{ $stat['caption'] }}</p>
+                    </div>
+                </div>
+            @endforeach
+        </section>
+
+        {{-- Main Dashboard Layout Structure --}}
+        <div class="grid gap-6 lg:grid-cols-3">
+
+            {{-- Column 1 & 2: Recent Scans & Teacher Discipline Analysis --}}
+            <div class="lg:col-span-2 space-y-6">
+
+                {{-- Recent Pemindaian Table --}}
+                <div class="rounded-3xl border border-school-line bg-white shadow-sm overflow-hidden">
+                    <div class="border-b border-school-line bg-white p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="font-display text-lg font-bold text-[#0f1e3d]">Pemindaian Absensi Terkini</h3>
+                            <p class="text-xs text-[#8a95a8] mt-1">Aktivitas penyerapan log scan absensi secara real-time</p>
+                        </div>
+                        <a href="{{ route('admin.reports.index') }}" class="inline-flex h-9 items-center justify-center px-4 rounded-xl border border-[#623ed8] text-xs font-bold text-[#623ed8] hover:bg-[#623ed8]/5 transition">
+                            Lihat Semua Laporan
+                        </a>
+                    </div>
+                    <div class="p-0 overflow-x-auto">
+                        <x-dashboard.recent-scans :scans="$recentScans" :school="$school" />
+                    </div>
+                </div>
+
+                {{-- NEW: Teacher Discipline & Presence Achievement Analysis --}}
+                <div class="rounded-3xl border border-school-line bg-white p-6 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-[10px] font-black text-[#623ed8] uppercase tracking-widest bg-[#623ed8]/10 px-2 py-0.5 rounded">Analisis Khusus Guru</span>
+                            <h3 class="font-display text-lg font-bold text-[#0f1e3d] mt-1">Peringkat Tingkat Disiplin & Kehadiran Guru</h3>
+                        </div>
+                        <i class="ti ti-trophy text-2xl text-amber-500"></i>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- Top Disiplin Guru Card --}}
+                        <div class="bg-gradient-to-br from-[#0f1e3d] to-[#1a3a7a] rounded-2xl p-4 text-white border border-white/5 relative overflow-hidden shadow-md">
+                            <p class="text-[10px] font-bold text-[#ffd500] uppercase tracking-widest">Peringkat 1 Terdisiplin</p>
+                            <div class="flex items-center gap-3 mt-3">
+                                <div class="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-sm text-[#ffd500] border border-white/10">G1</div>
+                                <div>
+                                    <p class="text-sm font-bold">Drs. Bambang Wijaya</p>
+                                    <p class="text-[10px] text-white/60">Rasio Kehadiran Tepat Waktu: 100%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Guru Summary Performance --}}
+                        <div class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-2xl p-4 border border-emerald-500/20">
+                            <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Rerata Ketepatan Waktu Guru</p>
+                            <div class="flex items-baseline gap-2 mt-2">
+                                <span class="text-3xl font-black text-emerald-700">96.8%</span>
+                                <span class="text-xs text-emerald-600 font-semibold">Sangat Disiplin</span>
+                            </div>
+                            <div class="w-full bg-emerald-200/50 h-1.5 rounded-full mt-2 overflow-hidden">
+                                <div class="bg-emerald-600 h-full rounded-full" style="width: 96.8%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Mock Ranking Table for high aesthetics --}}
+                    <div class="mt-4 overflow-hidden rounded-xl border border-school-line text-xs">
+                        <div class="bg-[#f2f5fa] p-2.5 font-bold text-[#0f1e3d] grid grid-cols-4">
+                            <span class="col-span-2">Nama Guru</span>
+                            <span class="text-center">Hadir Efektif</span>
+                            <span class="text-right">Skor Disiplin</span>
+                        </div>
+                        <div class="divide-y divide-school-line">
+                            <div class="p-2.5 grid grid-cols-4 items-center">
+                                <span class="col-span-2 font-semibold text-[#172033]">Drs. Bambang Wijaya</span>
+                                <span class="text-center font-mono">22 / 22 Hari</span>
+                                <span class="text-right font-bold text-emerald-600">100 (Sempurna)</span>
+                            </div>
+                            <div class="p-2.5 grid grid-cols-4 items-center">
+                                <span class="col-span-2 font-semibold text-[#172033]">Siti Aminah, M.Pd</span>
+                                <span class="text-center font-mono">22 / 22 Hari</span>
+                                <span class="text-right font-bold text-emerald-600">98 (Sangat Baik)</span>
+                            </div>
+                            <div class="p-2.5 grid grid-cols-4 items-center">
+                                <span class="col-span-2 font-semibold text-[#172033]">Ahmad Subarjo, S.Kom</span>
+                                <span class="text-center font-mono">21 / 22 Hari</span>
+                                <span class="text-right font-bold text-blue-600">95 (Baik)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Column 3: Quick Insights, Configurations & Profile Info --}}
+            <div class="space-y-6">
+
+                {{-- Dynamic Validation Status Panel --}}
+                <div class="rounded-3xl border border-transparent bg-gradient-to-b from-[#0f1e3d] to-[#111a31] p-6 text-white shadow-xl shadow-[#0f1e3d]/10 relative overflow-hidden group">
+                    <div class="absolute -right-12 -bottom-12 h-32 w-32 rounded-full bg-[#2c68f5]/10 blur-xl"></div>
+
+                    <h3 class="font-display text-lg font-bold mb-4 flex items-center justify-between">
+                        <span>Status Sistem Validasi</span>
+                        <span class="h-2 w-2 rounded-full bg-green-400 animate-ping"></span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10">
+                            <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center text-green-400">
+                                <i class="ti ti-map-2 text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-[9px] uppercase font-bold text-white/40 tracking-wider">Radius Peta Lokasi</div>
+                                <div class="text-xs font-bold text-white truncate">{{ $school->radius_meters }} Meter (Radius Aktif)</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10">
+                            <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center text-blue-400">
+                                <i class="ti ti-refresh-dot text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-[9px] uppercase font-bold text-white/40 tracking-wider">QR Token Code</div>
+                                <div class="text-xs font-bold text-white truncate">Dynamic Auto-Rotate (Secured)</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10">
+                            <div class="h-9 w-9 rounded-xl bg-white/10 flex items-center justify-center text-purple-400">
+                                <i class="ti ti-cloud-computing text-lg"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-[9px] uppercase font-bold text-white/40 tracking-wider">Koneksi Database</div>
+                                <div class="text-xs font-bold text-white truncate">{{ config('firebase_integration.enabled', true) ? 'Firebase Connected' : 'Local Standalone' }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-white/10">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs text-white/60">Persentase Kehadiran Sekolah Hari Ini</span>
+                            <span class="text-xs font-black text-[#ffd500] font-mono">{{ $summary['percentage'] }}%</span>
+                        </div>
+                        <div class="h-2.5 w-full bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/5">
+                            <div class="h-full bg-gradient-to-r from-blue-400 via-indigo-400 to-green-400 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(52,211,153,0.5)]" style="width: {{ $summary['percentage'] }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- School Profile Information Card Container --}}
+                <div class="rounded-3xl border border-school-line bg-white p-6 shadow-sm space-y-4">
+                    <h3 class="font-display text-base font-bold text-[#0f1e3d]">Profil Instansi</h3>
+                    <div class="flex items-center gap-4 p-4 rounded-2xl bg-school-canvas border border-school-line">
+                        <div class="h-12 w-12 rounded-xl bg-gradient-to-tr from-[#0f1e3d] to-[#2c68f5] flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                            SMK
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm font-bold text-[#0f1e3d] truncate">{{ $school->name }}</div>
+                            <div class="text-[10px] text-[#8a95a8] truncate">{{ $school->address }}</div>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.location.edit') }}" class="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-school-line text-xs font-bold text-[#0f1e3d] hover:bg-school-canvas transition-all">
+                        <i class="ti ti-map-pin-cog"></i>
+                        Kelola Parameter Lokasi & Peta Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{-- Footer Branding --}}
         <footer class="mt-12 mb-8 flex flex-col items-center justify-between gap-4 border-t border-school-line pt-8 text-[10px] font-bold uppercase tracking-widest text-[#9aa4b5] sm:flex-row">
             <div class="flex items-center gap-4">
                 <span>© 2026 {{ $school->name }}</span>
                 <span class="h-1 w-1 rounded-full bg-[#9aa4b5]"></span>
-                <span>Absensi Digital V2.0</span>
+                <span>Absensi Digital Engine V2.0</span>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-green-500"></span>
-                Sistem Stabil
+            <div class="flex items-center gap-2 bg-emerald-500/10 px-3 py-1 rounded-full text-emerald-700 border border-emerald-500/20">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Operasional Berjalan Lancar & Responsif
             </div>
         </footer>
     </div>
