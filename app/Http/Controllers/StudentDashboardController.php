@@ -50,7 +50,8 @@ class StudentDashboardController extends Controller
             ->get();
 
         $teacherRankings = collect();
-        if ($user->role === UserRole::GURU || $user->role?->value === 'guru') {
+        // ✅ FIX: Remove redundant condition - enum comparison is sufficient
+        if ($user->role === UserRole::GURU) {
             $teacherRankings = User::query()
                 ->where('role', UserRole::GURU->value)
                 ->where('active', true)
