@@ -46,7 +46,7 @@ Route::middleware(['auth', 'role:admin_sekolah'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:guru,siswa'])->group(function () {
-    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
+    Route::get('/dashboard-siswa', [StudentDashboardController::class, 'index'])->name('student.dashboard');
     Route::get('/scan', [StudentDashboardController::class, 'scan'])->name('attendance.scan');
     Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan.store');
     Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('student.profile');
