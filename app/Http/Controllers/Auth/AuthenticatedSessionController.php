@@ -27,6 +27,7 @@ class AuthenticatedSessionController extends Controller
             'password.required' => 'Kata sandi wajib diisi.',
         ]);
 
+        // ✅ SECURITY: Ensure only active users can login
         $credentials['active'] = true;
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
@@ -37,17 +38,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Clear stale intended URLs to prevent 403 "session hanging" bugs
+        // ✅ SECURITY: Clear stale intended URLs to prevent 403 "session hanging" bugs
         $request->session()->forget('url.intended');
 
         $user = Auth::user();
         $role = $user->role?->value ?? null;
 
-        if ($role === UserRole::ADMIN_SEKOLAH->value) {
-            return redirect()->route('dashboard');
-        }
-
-        return redirect()->route('student.dashboard');
+        // ✅ FIX: Properly redirect based on role
+        // Admin → dashboard
+        // Guru & Siswa → attendance.scan
+        return match ($role) {
+            UserRole::ADMIN_SEKOLAH->value => redirect()->route('dashboard'),
+            UserRole::GURU->value => redirect()->route('attendance.scan'),
+            UserRole::SISWA->value => redirect()->route('attendance.scan'),
+            default => back()
+                ->withInput($request->only('email', 'remember'))
+                ->withErrors(['email' => 'Peran pengguna tidak dikenali. Hubungi administrator.']),
+        };
     }
 
     public function destroy(Request $request): RedirectResponse
