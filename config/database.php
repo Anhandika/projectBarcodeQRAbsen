@@ -82,6 +82,10 @@ return [
             ]) : [],
         ],
 
+        // Railway automatically provides a DATABASE_URL environment variable
+        // for provisioned Postgres databases. When present, it takes
+        // precedence over the individual DB_HOST/DB_PORT/etc. variables
+        // below, so no further configuration is required on Railway.
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL', env('DB_URL')),
@@ -94,7 +98,7 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => 'prefer',
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 
         'sqlsrv' => [
