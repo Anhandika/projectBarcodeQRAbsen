@@ -97,57 +97,57 @@
                         <i class="ti ti-trophy text-2xl text-amber-500"></i>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {{-- Top Disiplin Guru Card --}}
-                        <div class="bg-gradient-to-br from-[#0f1e3d] to-[#1a3a7a] rounded-2xl p-4 text-white border border-white/5 relative overflow-hidden shadow-md">
-                            <p class="text-[10px] font-bold text-[#ffd500] uppercase tracking-widest">Peringkat 1 Terdisiplin</p>
-                            <div class="flex items-center gap-3 mt-3">
-                                <div class="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-sm text-[#ffd500] border border-white/10">G1</div>
-                                <div>
-                                    <p class="text-sm font-bold">Drs. Bambang Wijaya</p>
-                                    <p class="text-[10px] text-white/60">Rasio Kehadiran Tepat Waktu: 100%</p>
+                    @if($teacherRankings->isEmpty())
+                        <div class="p-6 text-center bg-[#f2f5fa] rounded-2xl border border-dashed border-school-line text-xs text-[#8a95a8]">
+                            <i class="ti ti-users text-xl mb-1 block"></i>
+                            Belum ada rekaman kehadiran guru bulan ini untuk menyusun peringkat kedisiplinan.
+                        </div>
+                    @else
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {{-- Top Disiplin Guru Card --}}
+                            @php $topTeacher = $teacherRankings->first(); @endphp
+                            <div class="bg-gradient-to-br from-[#0f1e3d] to-[#1a3a7a] rounded-2xl p-4 text-white border border-white/5 relative overflow-hidden shadow-md">
+                                <p class="text-[10px] font-bold text-[#ffd500] uppercase tracking-widest">Peringkat 1 Terdisiplin</p>
+                                <div class="flex items-center gap-3 mt-3">
+                                    <div class="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center font-bold text-sm text-[#ffd500] border border-white/10">1st</div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-bold truncate">{{ $topTeacher->name }}</p>
+                                        <p class="text-[10px] text-white/60">Total Kehadiran: {{ $topTeacher->attendances_count }} Hari</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Guru Summary Performance --}}
+                            <div class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-2xl p-4 border border-emerald-500/20 flex flex-col justify-center">
+                                <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Aktivitas Kehadiran Staf</p>
+                                <div class="flex items-baseline gap-2 mt-1">
+                                    <span class="text-2xl font-black text-emerald-700">{{ $teacherRankings->count() }} Guru</span>
+                                    <span class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Telah Aktif Absen</span>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Guru Summary Performance --}}
-                        <div class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 rounded-2xl p-4 border border-emerald-500/20">
-                            <p class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Rerata Ketepatan Waktu Guru</p>
-                            <div class="flex items-baseline gap-2 mt-2">
-                                <span class="text-3xl font-black text-emerald-700">96.8%</span>
-                                <span class="text-xs text-emerald-600 font-semibold">Sangat Disiplin</span>
+                        {{-- Real Ranking Table for high aesthetics --}}
+                        <div class="mt-4 overflow-hidden rounded-xl border border-school-line text-xs">
+                            <div class="bg-[#f2f5fa] p-2.5 font-bold text-[#0f1e3d] grid grid-cols-4">
+                                <span class="col-span-2">Nama Guru / Staf</span>
+                                <span class="text-center">Hadir Efektif</span>
+                                <span class="text-right">Skor Kehadiran</span>
                             </div>
-                            <div class="w-full bg-emerald-200/50 h-1.5 rounded-full mt-2 overflow-hidden">
-                                <div class="bg-emerald-600 h-full rounded-full" style="width: 96.8%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Mock Ranking Table for high aesthetics --}}
-                    <div class="mt-4 overflow-hidden rounded-xl border border-school-line text-xs">
-                        <div class="bg-[#f2f5fa] p-2.5 font-bold text-[#0f1e3d] grid grid-cols-4">
-                            <span class="col-span-2">Nama Guru</span>
-                            <span class="text-center">Hadir Efektif</span>
-                            <span class="text-right">Skor Disiplin</span>
-                        </div>
-                        <div class="divide-y divide-school-line">
-                            <div class="p-2.5 grid grid-cols-4 items-center">
-                                <span class="col-span-2 font-semibold text-[#172033]">Drs. Bambang Wijaya</span>
-                                <span class="text-center font-mono">22 / 22 Hari</span>
-                                <span class="text-right font-bold text-emerald-600">100 (Sempurna)</span>
-                            </div>
-                            <div class="p-2.5 grid grid-cols-4 items-center">
-                                <span class="col-span-2 font-semibold text-[#172033]">Siti Aminah, M.Pd</span>
-                                <span class="text-center font-mono">22 / 22 Hari</span>
-                                <span class="text-right font-bold text-emerald-600">98 (Sangat Baik)</span>
-                            </div>
-                            <div class="p-2.5 grid grid-cols-4 items-center">
-                                <span class="col-span-2 font-semibold text-[#172033]">Ahmad Subarjo, S.Kom</span>
-                                <span class="text-center font-mono">21 / 22 Hari</span>
-                                <span class="text-right font-bold text-blue-600">95 (Baik)</span>
+                            <div class="divide-y divide-school-line">
+                                @foreach($teacherRankings as $index => $teacher)
+                                <div class="p-2.5 grid grid-cols-4 items-center">
+                                    <span class="col-span-2 font-semibold text-[#172033] flex items-center gap-2">
+                                        <span class="font-mono text-[10px] text-school-muted">#{{ $index + 1 }}</span>
+                                        <span class="truncate">{{ $teacher->name }}</span>
+                                    </span>
+                                    <span class="text-center font-mono font-bold">{{ $teacher->attendances_count }} Hari</span>
+                                    <span class="text-right font-bold text-emerald-600">Aktif</span>
+                                </div>
+                                @endforeach
                             </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
 

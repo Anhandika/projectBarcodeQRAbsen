@@ -164,6 +164,29 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Teacher Discipline Leaderboard - visible only to Guru --}}
+                @if(auth()->user()->role === \App\Enums\UserRole::GURU && $teacherRankings->isNotEmpty())
+                <div class="bg-white/10 backdrop-blur-xl border border-white/15 rounded-3xl p-6 shadow-2xl space-y-4">
+                    <div>
+                        <p class="text-xs font-bold text-[#ffd500] uppercase tracking-wider">Papan Peringkat internal</p>
+                        <h3 class="text-lg font-bold text-white mt-0.5">Peringkat Kedisiplinan Guru & Staf</h3>
+                    </div>
+                    <div class="divide-y divide-white/10 text-xs">
+                        @foreach($teacherRankings as $index => $teacher)
+                        <div class="py-2.5 flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="font-mono font-bold text-[#ffd500] bg-white/5 h-6 w-6 rounded flex items-center justify-center">#{{ $index + 1 }}</span>
+                                <span class="font-semibold text-white truncate">{{ $teacher->name }}</span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-300 font-mono font-bold shrink-0">
+                                {{ $teacher->attendances_count }} Hari Hadir
+                            </span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- Column 3: Recent Activity Section --}}

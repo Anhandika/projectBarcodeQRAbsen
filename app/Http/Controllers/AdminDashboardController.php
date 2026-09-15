@@ -37,9 +37,22 @@ class AdminDashboardController extends Controller
         $presentStudents = $statsData['presentStudents'];
         $absentStudents = max(0, $totalStudents - $presentStudents);
 
+        // Fetch real teacher rankings based on present attendances
+        $teacherRankings = User::query()
+            ->where('role', UserRole::GURU->value)
+            ->where('active', true)
+            ->withCount(['attendances' => function ($query) {
+                $query->where('result', AttendanceResult::SUCCESS->value);
+            }])
+            ->having('attendances_count', '>', 0)
+            ->orderBy('attendances_count', 'desc')
+            ->limit(5)
+            ->get();
+
         return view('admin.dashboard', [
             'school' => $school,
             'activeUser' => auth()->user(),
+            'teacherRankings' => $teacherRankings,
             'stats' => [
                 ['label' => 'Total siswa', 'value' => $totalStudents, 'caption' => 'data pengguna aktif', 'icon' => 'ti-school', 'tone' => 'purple'],
                 ['label' => 'Total guru', 'value' => $totalTeachers, 'caption' => 'data pengguna aktif', 'icon' => 'ti-users', 'tone' => 'blue'],

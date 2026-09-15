@@ -49,7 +49,21 @@ class StudentDashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('student.dashboard', compact('user', 'school', 'stats', 'recentScans'));
+        $teacherRankings = collect();
+        if ($user->role === UserRole::GURU) {
+            $teacherRankings = User::query()
+                ->where('role', UserRole::GURU->value)
+                ->where('active', true)
+                ->withCount(['attendances' => function ($query) {
+                    $query->where('result', AttendanceResult::SUCCESS->value);
+                }])
+                ->having('attendances_count', '>', 0)
+                ->orderBy('attendances_count', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        return view('student.dashboard', compact('user', 'school', 'stats', 'recentScans', 'teacherRankings'));
     }
 
     public function scan(): View

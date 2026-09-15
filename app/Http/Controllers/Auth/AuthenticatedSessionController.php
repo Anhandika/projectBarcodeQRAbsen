@@ -36,9 +36,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return Auth::user()->isAdmin()
-            ? redirect()->intended(route('dashboard'))
-            : redirect()->intended(route('attendance.scan'));
+        if (Auth::user()->isAdmin()) {
+            return redirect()->intended(route('dashboard'));
+        }
+
+        return redirect()->intended(route('student.dashboard'));
     }
 
     public function destroy(Request $request): RedirectResponse
