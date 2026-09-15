@@ -42,7 +42,7 @@
             {{-- Advanced Multi Export Action Buttons Suite --}}
             <div class="flex flex-wrap items-center gap-2">
                 {{-- CSV Export Button --}}
-                <a href="{{ route('admin.reports.export', ['date' => $date]) }}"
+                <a href="{{ route('admin.reports.export', ['date' => $date, 'format' => 'csv']) }}"
                    @click="downloading = true; downloadType = 'CSV'; setTimeout(() => downloading = false, 2500)"
                    class="h-10 px-4 rounded-xl bg-slate-100 border border-school-line text-xs font-bold text-slate-700 hover:bg-slate-200 transition flex items-center gap-1.5 shadow-sm">
                     <i class="ti ti-file-text text-sm text-slate-500"></i>
@@ -50,7 +50,7 @@
                 </a>
 
                 {{-- Excel Export Button Sim --}}
-                <a href="{{ route('admin.reports.export', ['date' => $date]) }}"
+                <a href="{{ route('admin.reports.export', ['date' => $date, 'format' => 'excel']) }}"
                    @click="downloading = true; downloadType = 'Excel'; setTimeout(() => downloading = false, 2500)"
                    class="h-10 px-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition flex items-center gap-1.5 shadow-sm">
                     <i class="ti ti-file-spreadsheet text-sm text-emerald-600"></i>
@@ -58,7 +58,7 @@
                 </a>
 
                 {{-- PDF Export Button Sim --}}
-                <a href="{{ route('admin.reports.export', ['date' => $date]) }}"
+                <a href="{{ route('admin.reports.export', ['date' => $date, 'format' => 'pdf']) }}"
                    @click="downloading = true; downloadType = 'PDF'; setTimeout(() => downloading = false, 2500)"
                    class="h-10 px-4 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 hover:bg-red-100 transition flex items-center gap-1.5 shadow-sm">
                     <i class="ti ti-file-type-pdf text-sm text-red-600"></i>
