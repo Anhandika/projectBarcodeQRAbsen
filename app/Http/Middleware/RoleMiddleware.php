@@ -16,6 +16,7 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
+        // ✅ CHECK 1: Ensure user is authenticated
         if (!auth()->check()) {
             return redirect()->route('login');
         }
@@ -23,6 +24,7 @@ class RoleMiddleware
         $user = auth()->user();
         $userRole = $user?->role?->value;
 
+        // ✅ CHECK 2: Ensure user has a role assigned
         if (!$userRole) {
             \Log::warning('User role not set', [
                 'user_id' => auth()->id(),
@@ -30,10 +32,11 @@ class RoleMiddleware
                 'path' => $request->path(),
             ]);
 
-            return redirect()->route('profile.setup')
-                ->with('error', 'Peran pengguna tidak ditemukan. Silakan hubungi administrator.');
+            return redirect()->route('login')
+                ->with('error', 'Peran pengguna tidak ditemukan. Silakan login kembali.');
         }
 
+        // ✅ CHECK 3: Ensure user's role is in allowed roles
         if (!in_array($userRole, $roles, true)) {
             \Log::warning('Unauthorized role access attempt', [
                 'user_id' => auth()->id(),
