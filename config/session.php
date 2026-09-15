@@ -169,7 +169,10 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', true),
+    // Hanya kirim cookie lewat HTTPS bila aplikasi diakses via https (Railway).
+    // Default-disabled di HTTP lokal (mis. Laragon http://localhost) agar sesi tidak "hilang" / terus logout.
+    'secure' => env('SESSION_SECURE_COOKIE', Str::startsWith(env('APP_URL', ''), 'https://')),
+
 
     /*
     |--------------------------------------------------------------------------
