@@ -3,7 +3,7 @@ builder = "NIXPACKS"
 buildCommand = "composer install --no-dev --optimize-autoloader --no-interaction && npm ci && npm run build"
 
 [deploy]
-startCommand = "bash -c 'php artisan storage:link || true; if [ ! -f .env ]; then cp .env.example .env; fi; if grep -q \"^APP_KEY=$\" .env 2>/dev/null || ! grep -q \"^APP_KEY=\" .env 2>/dev/null; then echo \"APP_KEY=$(php artisan key:generate --show)\" >> .env; fi; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction || true; mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache; php artisan config:cache; php artisan route:cache; php artisan view:cache; (php artisan queue:work --tries=3 --timeout=90 --daemon &); (while true; do php artisan schedule:run --no-interaction; sleep 60; done &); php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
+startCommand = "bash -c 'php artisan storage:link || true; if [ ! -f .env ]; then cp .env.example .env; fi; if grep -q \"^APP_KEY=$\" .env 2>/dev/null || ! grep -q \"^APP_KEY=\" .env 2>/dev/null; then echo \"APP_KEY=$(php artisan key:generate --show)\" >> .env; fi; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction || true; mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache; php artisan optimize; php artisan config:cache; php artisan route:cache; php artisan view:cache; (php artisan queue:work --tries=3 --timeout=90 --daemon &); (while true; do php artisan schedule:run --no-interaction; sleep 60; done &); php artisan serve --host=0.0.0.0 --port=${PORT:-8000}'"
 healthcheckPath = "/up"
 healthcheckTimeout = 180
 restartPolicyType = "ON_FAILURE"

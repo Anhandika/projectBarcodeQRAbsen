@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Enums\UserRole;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,7 +40,10 @@ class AuthenticatedSessionController extends Controller
         // Clear stale intended URLs to prevent 403 "session hanging" bugs
         $request->session()->forget('url.intended');
 
-        if (Auth::user()->isAdmin()) {
+        $user = Auth::user();
+        $role = $user->role?->value ?? null;
+
+        if ($role === UserRole::ADMIN_SEKOLAH->value) {
             return redirect()->route('dashboard');
         }
 

@@ -20,9 +20,21 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        $userRole = auth()->user()?->role?->value;
+        $user = auth()->user();
+        $userRole = $user?->role?->value;
 
-        if (!$userRole || !in_array($userRole, $roles)) {
+        if (!$userRole) {
+            \Log::warning('User role not set', [
+                'user_id' => auth()->id(),
+                'ip_address' => $request->ip(),
+                'path' => $request->path(),
+            ]);
+
+            return redirect()->route('profile.setup')
+                ->with('error', 'Peran pengguna tidak ditemukan. Silakan hubungi administrator.');
+        }
+
+        if (!in_array($userRole, $roles, true)) {
             \Log::warning('Unauthorized role access attempt', [
                 'user_id' => auth()->id(),
                 'user_role' => $userRole,
