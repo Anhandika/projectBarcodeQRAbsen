@@ -123,4 +123,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    |
+    | Railway (and most PaaS providers) terminate TLS and proxy requests to
+    | your application through a reverse proxy. Trusting the proxy ensures
+    | that Laravel correctly detects the client's IP, scheme, and host so
+    | that generated URLs and session cookies behave properly in production.
+    |
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES', '*'),
+
 ];

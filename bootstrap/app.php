@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->trustProxies(at: '*');
+        $middleware->trustProxies(at: config('app.trusted_proxies', '*'));
         $middleware->alias([
             'role' => EnsureUserRole::class,
         ]);

@@ -84,6 +84,11 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
+            // Railway injects a DATABASE_URL variable (e.g.
+            // postgres://user:password@host:port/database). Laravel's
+            // ConfigurationUrlParser will parse this automatically and
+            // override the individual DB_* options below, so no manual
+            // parsing is required here.
             'url' => env('DATABASE_URL', env('DB_URL')),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
@@ -94,7 +99,7 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => 'prefer',
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 
         'sqlsrv' => [
